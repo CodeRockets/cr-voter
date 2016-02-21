@@ -18,7 +18,7 @@
     "url": "https://github.com/CodeRockets/cr-voter"
   },
   "author": "Eyüp Ferhat GÜDÜCÜ",
-  "license": "Apache-2.0",  
+  "license": "Apache-2.0",
   "homepage": "",
   "dependencies": {
     "boom": "^2.6.0",
@@ -26,7 +26,8 @@
     "joi": "^5.0.1",
     "pg": "^4.4.6",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^3.19.3"
+    "sequelize": "^3.19.3",
+    "wreck": "^7.0.0"
   },
   "devDependencies": {
     "lab": "^5.0.2",
