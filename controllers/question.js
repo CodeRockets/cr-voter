@@ -26,8 +26,10 @@ QuestionController.prototype.addQuestion = function(request, reply) {
             newQuestion.option_a = 'evet';
         }
 
-        this.questionModel.insertQuestion(newQuestion)
-        reply({data:{}})
+        this.questionModel.insertQuestion(newQuestion,function(createdQuestion){
+            reply({data:createdQuestion});
+        });
+    
 
     } catch (e) {
         reply(Boom.badRequest(e.message));
@@ -37,10 +39,24 @@ QuestionController.prototype.addQuestion = function(request, reply) {
 
 
 // [GET] /tasks/{id}
-QuestionController.prototype.show = function(request, reply) {
+QuestionController.prototype.all = function(request, reply) {
     try {
-
-        reply("Yeaaaa");
+        
+        this.questionModel.showAllQuestions(function(data){
+            reply(data);
+        });
+       
+    } catch (e) {
+        reply(Boom.notFound(e.message));
+    }
+};
+QuestionController.prototype.fetch = function(request, reply) {
+    try {
+        
+        this.questionModel.fetchQuestions(request.params.app,function(data){
+            reply(data);
+        });
+       
     } catch (e) {
         reply(Boom.notFound(e.message));
     }

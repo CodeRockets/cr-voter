@@ -1,5 +1,8 @@
-var Hapi = require('hapi');
-var Wreck = require('wreck');
+const Hapi = require('hapi');
+const Inert = require('inert');
+const Vision = require('vision');
+const HapiSwagger = require('hapi-swagger');
+const Wreck = require('wreck');
 var db = require("./db_schemas");
 
 var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info', 'error'] } });
@@ -8,24 +11,30 @@ var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info'
 
 server.connection({
     host: 'localhost',
-    port: 8000
+    port: process.env.PORT || 8000
 });
 
-var plugins = [{
-    register: require('./routes/v1/question.js'),
-    options: {
-        database: db
+const options = {
+    info: {
+            'title': 'cr-voter referandum ve kapistir API',
+            'version': '1.0',
+        }
+    };
+
+var plugins = [
+    Inert,
+    Vision, {
+        'register': HapiSwagger,
+        'options': options
+    }, {
+        register: require('./routes/v1/question.js'),
+        options: {
+            database: db
+        }
     }
-}];
+];
 
 
-server.route({
-    method: 'GET',
-    path: '/',
-    handler: function(request, reply) {
-        reply('Hello, world!');
-    }
-});
 
 
 server.ext('onPreResponse', function(request, reply) {

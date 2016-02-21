@@ -22,11 +22,14 @@
   "homepage": "",
   "dependencies": {
     "boom": "^2.6.0",
-    "hapi": "~8.0.0",
+    "hapi": "^13.0.0",
+    "hapi-swagger": "^4.2.1",
+    "inert": "^3.2.0",
     "joi": "^5.0.1",
     "pg": "^4.4.6",
     "pg-hstore": "^2.3.2",
     "sequelize": "^3.19.3",
+    "vision": "^4.0.1",
     "wreck": "^7.0.0"
   },
   "devDependencies": {
