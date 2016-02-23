@@ -10,7 +10,11 @@ var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info'
 
 
 server.connection({
+<<<<<<< HEAD
     host: '0.0.0.0',
+=======
+    host: 'localhost',
+>>>>>>> 9325d888ab13e449bceeb0ba94de45b8fe30c9d4
     port: process.env.PORT || 8000
 });
 
