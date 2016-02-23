@@ -33,6 +33,8 @@ node_modules
 .node_repl_history
 
 #Configuration file
-#config/db_config.json
+
+config/db_config.json
 
 bfg.jar
+
