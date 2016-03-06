@@ -62,6 +62,16 @@ QuestionController.prototype.fetch = function(request, reply) {
     }
 };
 
+QuestionController.prototype.answer = function(request, reply) {
+    try {
+        
+       
+       
+    } catch (e) {
+        reply(Boom.notFound(e.message));
+    }
+};
+
 
 
 module.exports = QuestionController;
