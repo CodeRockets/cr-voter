@@ -1,8 +1,9 @@
+"use strict";
+
 const Hapi = require('hapi');
 const Inert = require('inert');
 const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
-const Wreck = require('wreck');
 var db = require("./db_schemas");
 
 var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info', 'error'] } });
@@ -10,24 +11,10 @@ var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info'
 
 
 server.connection({
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     host: '0.0.0.0',
-=======
-    host: 'localhost',
->>>>>>> 9325d888ab13e449bceeb0ba94de45b8fe30c9d4
-=======
-    host: '0.0.0.0',
->>>>>>> eb3d94a25ebdc3aca21d868d7fe86c475fcfd56b
-=======
-    host: '0.0.0.0',
-=======
-    host: 'localhost',
->>>>>>> 9325d888ab13e449bceeb0ba94de45b8fe30c9d4
->>>>>>> 168f3d5301f7ee9cc881efb4eaa60b3f2a0ebf8f
-    port: process.env.PORT || 8000
-});
+    //host: 'localhost',
+    		port: process.env.PORT || 8000
+	});
 
 const options = {
     info: {
@@ -65,13 +52,14 @@ server.ext('onPreResponse', function(request, reply) {
 });
 
 //Sync with database
-db.sequelize.sync({ logging: true, logging: console.log }).then(function(asdas) {
-
-    //Register the plugins
+db.sequelize.sync({ logging: true }).then(
+		
+   function(result) {
+   //Register the plugins
     server.register(plugins, function(err) {
-        if (err) {
+        if (err){ 
             throw err;
-        }
+	}
 
         if (!module.parent) {
             server.start(function(err) {
@@ -85,3 +73,4 @@ db.sequelize.sync({ logging: true, logging: console.log }).then(function(asdas) 
     });
 
 });
+
