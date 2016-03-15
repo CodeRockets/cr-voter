@@ -2,17 +2,19 @@
 
 var crypto = require('crypto');
 
-function AnswerModel(db) {
-    this.answerSchema = db.answer;
+function UserModel(db) {
+    this.userSchema = db.answer;
 };
 
-AnswerModel.prototype.answer = function(answer, cb) {
+UserModel.prototype.upsert = function(answer, cb) {
 
-    this.answerSchema.create(answer).then(function(createdQuestion) {
+
+
+    this.userSchema.create(answer).then(function(createdQuestion) {
         cb(createdQuestion);
     });
 };
 
 
 
-module.exports = AnswerModel;
+module.exports = UserModel;
