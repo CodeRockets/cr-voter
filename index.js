@@ -11,8 +11,8 @@ var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info'
 
 
 server.connection({
-    host: '0.0.0.0',
-    //host: 'localhost',
+    //host: '0.0.0.0',
+    host: 'localhost',
     		port: process.env.PORT || 8000
 	});
 
@@ -30,6 +30,12 @@ var plugins = [
         'options': options
     }, {
         register: require('./routes/v1/question.js'),
+        options: {
+            database: db
+        }
+    },
+    {
+        register: require('./routes/v1/user.js'),
         options: {
             database: db
         }

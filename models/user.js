@@ -3,16 +3,15 @@
 var crypto = require('crypto');
 
 function UserModel(db) {
-    this.userSchema = db.answer;
+    this.userSchema = db.user;
 };
 
-UserModel.prototype.upsert = function(answer, cb) {
-
-
-
-    this.userSchema.create(answer).then(function(createdQuestion) {
+UserModel.prototype.upsert = function(user, cb) {
+//Upsert olacak
+    this.userSchema.create(user).then(function(createdQuestion) {
         cb(createdQuestion);
     });
+
 };
 
 
