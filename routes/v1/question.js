@@ -73,6 +73,7 @@ exports.register = function(server, options, next) {
                 'İsteğin başarımını response status code dan anlayabilirsiniz. Dönen dataya bakmaya gerek yok.',
                 'Headerlar zorunlu.'
             ],
+
             handler: questionController.addQuestion,
             validate: {
                 payload: Joi.object().keys({
@@ -113,6 +114,45 @@ exports.register = function(server, options, next) {
                                     "question_image": "http://cdn1.lcwaikiki.com/ProductImages/20152/3/2418450/M_20152-5K8893Z6-2B0_A.jpg",
                                     "option_b": "hayir",
                                     "option_a": "evet"
+                                }
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
+    }, {
+        method: 'POST',
+        path: '/v1/question/image',
+        config: {
+            description: 'Upload image',
+            tags: ['api', 'image', 'upload'],
+            notes: ['image upload '],
+            payload: {
+                output: 'stream',
+                parse: true,
+                allow: 'multipart/form-data'
+            },
+            handler: questionController.upload,
+            validate: {
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                statusCode: 200,
+                                error: null,
+                                message: "success",
+                                timestamp: Date.now(),
+                                data: {                                    
+                                    "img": "http://cdn1.lcwaikiki.com/ProductImages/20152/3/2418450/M_20152-5K8893Z6-2B0_A.jpg"                                    
                                 }
                             }).label('Result')
                         }

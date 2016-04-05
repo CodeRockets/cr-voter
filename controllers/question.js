@@ -2,6 +2,8 @@
 
 var Boom = require('boom');
 var QuestionModel = require('../models/question');
+var cloudinary = require('cloudinary');
+var fs = require('fs');
 
 
 function QuestionController(db) {
@@ -73,26 +75,40 @@ QuestionController.prototype.answer = function(request, reply) {
 
 QuestionController.prototype.upload = function(request, reply) {
     try {
+
+        cloudinary.config({ 
+          cloud_name: 'dlxdlp9jz', 
+          api_key: '754935824337155', 
+          api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI' 
+        });       
+
         var data = request.payload;
+
         if (data.file) {
             var name = data.file.hapi.filename;
-            var path = __dirname + "/uploads/" + name;
+            var path = __dirname + "/../uploads/" + name;
             var file = fs.createWriteStream(path);
 
             file.on('error', function(err) {
-                console.error(err)
+                console.error(err);
             });
 
             data.file.pipe(file);
 
             data.file.on('end', function(err) {
-                var ret = {
-                    filename: data.file.hapi.filename,
-                    headers: data.file.hapi.headers
-                }
-                reply(JSON.stringify(ret));
-            })
+
+                cloudinary.uploader.upload(path, function(result) {
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                        reply({data:result.url});
+                    });
+                });
+
+            });
+        }else{
+               reply("Dosya bulunamadı");
         }
+
 
 
 

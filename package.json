@@ -31,7 +31,8 @@
     "sequelize": "^3.19.3",
     "vision": "^4.0.1",
     "wreck": "^7.0.0",
-    "fb":"1.1.0-alpha1"
+    "fb":"1.1.0-alpha1",
+    "cloudinary":"1.3.1"
   },
   "devDependencies": {
     "lab": "^5.0.2",
