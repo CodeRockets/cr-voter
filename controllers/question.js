@@ -66,7 +66,7 @@ QuestionController.prototype.fetch = function(request, reply) {
 QuestionController.prototype.answer = function(request, reply) {
     try {
 
-
+//Bu buradan çıkarılacak
 
     } catch (e) {
         reply(Boom.notFound(e.message));
@@ -106,7 +106,7 @@ QuestionController.prototype.upload = function(request, reply) {
 
             });
         }else{
-               reply("Dosya bulunamadı");
+               reply(Boom.notFound("Dosya bulunamadı"));
         }
 
 
