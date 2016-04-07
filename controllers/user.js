@@ -3,6 +3,7 @@
 var Boom = require('boom');
 var UserModel = require('../models/user');
 var FB = require('fb');
+var cloudinary = require('cloudinary');
 
 
 function UserController(db) {
@@ -12,7 +13,15 @@ function UserController(db) {
 UserController.prototype.signup = function(request, reply) {
     try {
 
-    	var self =this;
+cloudinary.config({ 
+          cloud_name: 'dlxdlp9jz', 
+          api_key: '754935824337155', 
+          api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI' 
+        });       
+
+
+
+        var self = this;
 
         FB.api('me', { fields: ['id', 'name', 'picture.type(large)'], access_token: request.payload.token }, function(res) {
 
@@ -22,17 +31,16 @@ UserController.prototype.signup = function(request, reply) {
             }
 
             var data = {};
-            data.facebook_id=res.id;
-            data.name=res.name;
-            data.profile_img=res.picture.data.url;
+            data.facebook_id = res.id;
+            data.name = res.name;
 
+            cloudinary.uploader.upload(res.picture.data.url, function(result) {
 
-            self.userModel.upsert(data, function(createdQuestion) {
-                reply({ data: createdQuestion });
+                data.profile_img = result.url;
+                self.userModel.upsert(data, function(createdQuestion) {
+                    reply({ data: createdQuestion });
+                });
             });
-
-
-         
 
         });
 
