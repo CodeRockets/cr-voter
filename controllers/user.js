@@ -26,7 +26,7 @@ cloudinary.config({
         FB.api('me', { fields: ['id', 'name', 'picture.type(large)'], access_token: request.payload.token }, function(res) {
 
             if (!res || res.error) {
-                reply(Boom.badImplementation(res.error));
+                reply(Boom.badImplementation(JSON.stringify(res)));
                 return;
             }
 
@@ -37,8 +37,8 @@ cloudinary.config({
             cloudinary.uploader.upload(res.picture.data.url, function(result) {
 
                 data.profile_img = result.url;
-                self.userModel.upsert(data, function(createdQuestion) {
-                    reply({ data: createdQuestion });
+                self.userModel.upsert(data, function(createdUser) {
+                    reply({ data: createdUser });
                 });
             });
 

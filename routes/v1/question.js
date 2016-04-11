@@ -127,7 +127,7 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Upload image',
             tags: ['api', 'image', 'upload'],
-            notes: ['image upload '],
+            notes: ['image upload ','https://github.com/CodeRockets/cr-voter/blob/master/postman-img-upload.png'],
             payload: {
                 output: 'stream',
                 parse: true,

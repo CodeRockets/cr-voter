@@ -7,10 +7,27 @@ function UserModel(db) {
 };
 
 UserModel.prototype.upsert = function(user, cb) {
-//Upsert olacak
-    this.userSchema.create(user).then(function(createdQuestion) {
-        cb(createdQuestion);
+    //Upsert olacak
+
+var self=this;
+    this.userSchema.findAll({
+        where: {
+            facebook_id: user.facebook_id
+        }
+    }).then(function(userList) {
+
+        if (userList.length == 0) {
+            self.userSchema.create(user).then(function(createdUser) {
+                cb(createdUser);
+            });
+        } else {
+            cb(userList[0]);
+        }
+
     });
+
+
+
 
 };
 
