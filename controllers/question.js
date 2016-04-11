@@ -83,6 +83,10 @@ QuestionController.prototype.upload = function(request, reply) {
         });       
 
         var data = request.payload;
+        var dir = __dirname + "/../uploads";
+        if (!fs.existsSync(dir)){
+            fs.mkdirSync(dir);
+        }
 
         if (data.file) {
             var name = data.file.hapi.filename;

@@ -11,7 +11,7 @@ function AnswerController(db) {
 AnswerController.prototype.answer = function(request, reply) {
     try {	
      	
-    this.answerModel.answer()
+   	 this.answerModel.answer();
 
     } catch (e) {
         reply(Boom.badRequest(e.message));
