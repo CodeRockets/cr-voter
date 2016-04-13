@@ -8,6 +8,8 @@ var cloudinary = require('cloudinary');
 
 function UserController(db) {
     this.userModel = new UserModel(db);
+    //test
+    
 };
 
 UserController.prototype.signup = function(request, reply) {
