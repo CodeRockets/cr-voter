@@ -31,7 +31,8 @@ var plugins = [
     }, {
         register: require('./routes/v1/question.js'),
         options: {
-            database: db
+           
+             database: db
         }
     },
     {
