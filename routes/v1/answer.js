@@ -2,33 +2,36 @@
 
 // Tasks routes
 var Joi = require('joi');
-var UserController = require('../../controllers/user');
+var AnswerController = require('../../controllers/answer');
 
 
 exports.register = function(server, options, next) {
     // Setup the controller
-    var userController = new UserController(options.database);
+    var answerController = new AnswerController(options.database);
 
-    server.bind(userController);
+    server.bind(answerController);
 
     // Declare routes
     server.route([{
         method: 'POST',
-        path: '/v1/user',
+        path: '/v1/answer',
         config: {
-            description: 'Creates a user with facebook api token',
+            description: 'Answer route',
             tags: ['api', 'user', 'add'],
-            notes: ['Referandum uygulamasından data post ederken **option_a** ve **option_b** parametrelerini göndermenize gerek yok.',
-                'Kapıştır uygulamasından data post ederken **question_text** ve **question_image** parametrelerini göndermenize gerek yok.',
-                'Success durumunda verilen response hata durumunda statusCode 200 den farklı olarak dünüyor.',
-                'İsteğin başarımını response status code dan anlayabilirsiniz. Dönen dataya bakmaya gerek yok.',
-                'Headerlar zorunlu.'
+            notes: ['Answer','cevaplardan'
             ],
-            handler: userController.signup,
+            handler: answerController.answer,
             validate: {
-                payload: Joi.object().keys({
-                    token: Joi.string().required().description('Facebook api token'),
-                    installation_id: Joi.string().required().description('installation_id veya imei')
+                payload: Joi.object().keys({                    
+                    installation_id: Joi.string().required().description('installation_id veya imei'),
+                    option:
+
+                    question_text: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru metni'),
+                    question_image: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru resim linki'),
+                    user_id: Joi.string().required().description('User id'),
+                    app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
+                    option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
+                    option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
