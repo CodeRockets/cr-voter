@@ -18,6 +18,7 @@ var self=this;
 
         if (userList.length == 0) {
             self.userSchema.create(user).then(function(createdUser) {
+            	//empty
                 cb(createdUser);
             });
         } else {
