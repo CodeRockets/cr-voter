@@ -8,6 +8,7 @@ function AnswerModel(db) {
 
 AnswerModel.prototype.answer = function(answer, cb) {
 
+//question cevaplar atanacak
     this.answerSchema.create(answer).then(function(createdQuestion) {
         cb(createdQuestion);
     });
