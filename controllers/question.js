@@ -20,6 +20,7 @@ QuestionController.prototype.addQuestion = function(request, reply) {
         if (request.payload.app === 1) { //Kapistir
             newQuestion.option_b = request.payload.option_b;
             newQuestion.option_a = request.payload.option_a;
+            //empty 
 
         } else { //Referandum
             newQuestion.question_text = request.payload.question_text;
