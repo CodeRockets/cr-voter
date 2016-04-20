@@ -18,19 +18,16 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Answer route',
             tags: ['api', 'user', 'add'],
-            notes: ['Answer','cevaplardan'
-            ],
+            notes: ['Answer','cevaplardan'],
             handler: answerController.answer,
             validate: {
                 payload: Joi.object().keys({                    
                     installation_id: Joi.string().required().description('installation_id veya imei'),
-                    option:Joi.string().required().description('installation_id veya imei'),
-                    question_text: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru metni'),
-                    question_image: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru resim linki'),
-                    user_id: Joi.string().required().description('User id'),
-                    app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
-                    option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
-                    option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
+                    option:Joi.string().required().description(' soldaki "a" sağdaki "b" skip "s" '),
+                    question_id:Joi.string().required().description('question_id'),
+                    user_id:Joi.string().required().description('user_id'),
+                    text:Joi.string().required().description('answer text or image link'),
+                    client_id:Joi.string().required().description('kapistir için 1 referandum için 0')                    
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),

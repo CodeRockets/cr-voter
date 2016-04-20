@@ -33,4 +33,27 @@ QuestionModel.prototype.fetchQuestions = function(app, cb) {
     });
 };
 
+QuestionModel.prototype.increaseStats = function(answer,cb) {
+
+
+    switch(answer.option) {
+    case 'a':
+        code block
+        break;
+    case 'b':
+        code block
+        break;
+    case 's':
+        code block
+        break;
+    default:
+        default code block
+}
+
+    this.questionSchema.findAll().then(function(questions) {
+        cb(questions);
+    });
+};
+
+
 module.exports = QuestionModel;
