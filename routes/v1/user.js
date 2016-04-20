@@ -27,8 +27,7 @@ exports.register = function(server, options, next) {
             handler: userController.signup,
             validate: {
                 payload: Joi.object().keys({
-                    token: Joi.string().required().description('Facebook api token'),
-                    installation_id: Joi.string().required().description('installation_id veya imei')
+                    token: Joi.string().required().description('Facebook api token')
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),

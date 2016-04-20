@@ -9,7 +9,7 @@ function UserModel(db) {
 UserModel.prototype.upsert = function(user, cb) {
     //Upsert olacak
 
-var self=this;
+    var self = this;
     this.userSchema.findAll({
         where: {
             facebook_id: user.facebook_id
@@ -18,18 +18,21 @@ var self=this;
 
         if (userList.length == 0) {
             self.userSchema.create(user).then(function(createdUser) {
-            	//empty
+                //empty
                 cb(createdUser);
             });
         } else {
-            cb(userList[0]);
+            var mUser = userList[0];
+            mUser.update({
+                imei: user.imei
+            }).then(function() {
+                cb(mUser);
+            })
+
+
         }
 
     });
-
-
-
-
 };
 
 

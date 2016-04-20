@@ -25,7 +25,6 @@ exports.register = function(server, options, next) {
                 payload: Joi.object().keys({                    
                     installation_id: Joi.string().required().description('installation_id veya imei'),
                     option:Joi.string().required().description('installation_id veya imei'),
-
                     question_text: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru metni'),
                     question_image: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru resim linki'),
                     user_id: Joi.string().required().description('User id'),
