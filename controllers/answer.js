@@ -2,11 +2,13 @@
 
 var Boom = require('boom');
 var AnswerModel = require('../models/answer');
+var QuestionModel = require('../models/question');
 var async = require('async');
 
 
 function AnswerController(db) {
     this.answerModel = new AnswerModel(db);
+    this.questionModel = new QuestionModel(db);
 };
 
 AnswerController.prototype.answer = function(request, reply) {
@@ -24,19 +26,18 @@ AnswerController.prototype.answer = function(request, reply) {
                 newAnswer.user_id = request.payload.user_id;
                 newAnswer.text = request.payload.text;
                 newAnswer.client_id = request.payload.client_id;
-
-
+                
                 self.answerModel.answer(newAnswer, function(answered) {
                 	callback(null,answered);
 
                 });
 
             },
-            function(user_data, callback) {
-                //question düzenle
-            },
-            function(user_data, callback) {
-                //user'i düzenle
+            function(answer, callback) {
+               this.questionModel.increaseStats(answer, function(answered) {
+                	callback(null,answer);
+
+                });
             }
         ], function(err, result) {
             if (!result || err) {

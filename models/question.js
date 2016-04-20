@@ -33,26 +33,32 @@ QuestionModel.prototype.fetchQuestions = function(app, cb) {
     });
 };
 
-QuestionModel.prototype.increaseStats = function(answer,cb) {
+QuestionModel.prototype.increaseStats = function(answer, cb) {
 
 
-    switch(answer.option) {
-    case 'a':
-        code block
-        break;
-    case 'b':
-        code block
-        break;
-    case 's':
-        code block
-        break;
-    default:
-        default code block
-}
+    this.questionSchema.increment()
 
-    this.questionSchema.findAll().then(function(questions) {
-        cb(questions);
+    var incrementField = 'skip_count';
+
+    switch (answer.option) {
+        case 'a':
+            incrementField = 'option_a_count';
+            break;
+        case 'b':
+            incrementField = 'option_b_count';
+            break;
+        case 's':
+            incrementField = 'skip_count';
+            break;
+        default:
+            incrementField = 'skip_count';
+            break;
+
+    }
+    this.questionSchema.increment(incrementField).then(function() {
+        cb('OK');
     });
+    
 };
 
 
