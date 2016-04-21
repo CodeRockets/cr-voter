@@ -21,7 +21,6 @@ AnswerModel.prototype.answer = function(answer, cb) {
     }
 
 
-
     this.answerSchema.findAll({
         where: whereQuery
     }).then(function(answerList) {
@@ -31,6 +30,7 @@ AnswerModel.prototype.answer = function(answer, cb) {
                 cb(createdAnswer);
             });
         } else {
+
             var dbAnswer = answerList[0];
 
             if (dbAnswer.option == 's' && answer.option !== 's') {
@@ -41,25 +41,11 @@ AnswerModel.prototype.answer = function(answer, cb) {
                     cb(dbAnswer);
                 });
             } else {
-
                 cb(dbAnswer);
-                
             }
-
-
-
         }
 
     });
-
-
-    if (answer.option == 's') {
-
-    } else {
-
-    }
-
-
 };
 
 
