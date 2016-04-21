@@ -41,6 +41,12 @@ var plugins = [
         options: {
             database: db
         }
+    },
+    {
+        register: require('./routes/v1/answer.js'),
+        options: {
+            database: db
+        }
     }
 ];
 

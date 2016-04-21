@@ -18,16 +18,15 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Answer route',
             tags: ['api', 'user', 'add'],
-            notes: ['Answer','cevaplardan'],
+            notes: ['Eğer cevap verildiği sırada login olunmadıysa user_id boş gönderebilirsiniz', 'text alanına cevabın uzun hali yazılacak, kapistir için link referandum için evet hayir'],
             handler: answerController.answer,
             validate: {
-                payload: Joi.object().keys({                    
-                    installation_id: Joi.string().required().description('installation_id veya imei'),
-                    option:Joi.string().required().description(' soldaki "a" sağdaki "b" skip "s" '),
-                    question_id:Joi.string().required().description('question_id'),
-                    user_id:Joi.string().required().description('user_id'),
-                    text:Joi.string().required().description('answer text or image link'),
-                    client_id:Joi.string().required().description('kapistir için 1 referandum için 0')                    
+                payload: Joi.object().keys({
+                    option: Joi.string().required().description(' soldaki "a" sağdaki "b" skip "s" '),
+                    question_id: Joi.string().required().description('question_id'),
+                    user_id: Joi.string().required().description('user_id'),
+                    text: Joi.string().required().description('answer text or image link'),
+                    client_id: Joi.number().required().description('kapistir için 1 referandum için 0')
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
@@ -41,19 +40,24 @@ exports.register = function(server, options, next) {
                         '200': {
                             'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
                             'schema': Joi.object({
-                                "data": {
-                                    "id": "c94642f0-fd0f-11e5-9a28-a3a2789bd42e",
-                                    "created_at": "2016-04-07T22:26:34.000Z",
-                                    "updated_at": "2016-04-07T22:26:34.000Z",
-                                    "is_deleted": false,
-                                    "facebook_id": "10153036713185139",
-                                    "name": "Eyüp Ferhat Güdücü",
-                                    "profile_img": "http://res.cloudinary.com/dlxdlp9jz/image/upload/v1460068234/w9uanjdmtg86xebceoqv.jpg"
-                                },
-                                "statusCode": 200,
-                                "error": null,
-                                "message": "success",
-                                "timestamp": 1460067996068
+                                
+                                    "data": {
+                                        "id": "f0c236d0-0765-11e6-826e-b336e65223ae",
+                                        "created_at": "2016-04-21T02:08:29.000Z",
+                                        "updated_at": "2016-04-21T02:08:29.000Z",
+                                        "is_deleted": false,
+                                        "installation_id": "asdasdasdu88asd",
+                                        "option": "a",
+                                        "question_id": "89160c90-0676-11e6-9165-7f13b5d750e4",
+                                        "user_id": "2d0387a0-0682-11e6-a473-e30ed6cf5986",
+                                        "text": "http://res.cloudinary.com/dlxdlp9jz/image/upload/v1461101685/udr8d8sxx0h9myuzzp94.jpg",
+                                        "client_id": "1"
+                                    },
+                                    "statusCode": 200,
+                                    "error": null,
+                                    "message": "success",
+                                    "timestamp": 1461204510133
+                                
                             }).label('Result')
                         }
                     }
@@ -66,6 +70,6 @@ exports.register = function(server, options, next) {
 }
 
 exports.register.attributes = {
-    name: 'routes-user',
+    name: 'routes-answer',
     version: '1.0.1'
 };

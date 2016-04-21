@@ -18,10 +18,7 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Creates a user with facebook api token',
             tags: ['api', 'user', 'add'],
-            notes: ['Referandum uygulamasından data post ederken **option_a** ve **option_b** parametrelerini göndermenize gerek yok.',
-                'Kapıştır uygulamasından data post ederken **question_text** ve **question_image** parametrelerini göndermenize gerek yok.',
-                'Success durumunda verilen response hata durumunda statusCode 200 den farklı olarak dünüyor.',
-                'İsteğin başarımını response status code dan anlayabilirsiniz. Dönen dataya bakmaya gerek yok.',
+            notes: ['Sadece facebook auth_token göndereceksiniz. Geriye user alacaksınız.',
                 'Headerlar zorunlu.'
             ],
             handler: userController.signup,

@@ -29,11 +29,13 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Fetch by application type',
             tags: ['api', 'question', 'fetch'],
-            notes: ['Her istekte 10 soru getirir'],
+            notes: ['Her istekte limit değeri kadar soru getirir, eğer login değilse user_id boş bırakılabilir'],
             handler: questionController.fetch,
             validate: {
                 params: {
                     app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
+                    limit:Joi.number().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                    user_id:Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10'),
                 },
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),

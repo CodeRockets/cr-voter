@@ -55,8 +55,15 @@ QuestionController.prototype.all = function(request, reply) {
 QuestionController.prototype.fetch = function(request, reply) {
     try {
 
-        this.questionModel.fetchQuestions(request.params.app, function(data) {
-            reply(data);
+        var uId = (request.query.user_id || request.query.user_id.length > 0) ? request.query.user_id : null;
+
+        this.questionModel.fetchQuestions(request.params.app, request.query.limit, uId, request.headers['x-voter-installation'], function(data) {
+            reply({
+                data: {
+                    "count": data.length,
+                    "rows": data
+                }
+            });
         });
 
     } catch (e) {
@@ -64,28 +71,19 @@ QuestionController.prototype.fetch = function(request, reply) {
     }
 };
 
-QuestionController.prototype.answer = function(request, reply) {
-    try {
-
-//Bu buradan çıkarılacak
-
-    } catch (e) {
-        reply(Boom.notFound(e.message));
-    }
-};
 
 QuestionController.prototype.upload = function(request, reply) {
     try {
 
-        cloudinary.config({ 
-          cloud_name: 'dlxdlp9jz', 
-          api_key: '754935824337155', 
-          api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI' 
-        });       
+        cloudinary.config({
+            cloud_name: 'dlxdlp9jz',
+            api_key: '754935824337155',
+            api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI'
+        });
 
         var data = request.payload;
         var dir = __dirname + "/../uploads";
-        if (!fs.existsSync(dir)){
+        if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
         }
 
@@ -105,13 +103,13 @@ QuestionController.prototype.upload = function(request, reply) {
                 cloudinary.uploader.upload(path, function(result) {
                     fs.unlink(path, (err) => {
                         if (err) throw err;
-                        reply({data:result.url});
+                        reply({ data: result.url });
                     });
                 });
 
             });
-        }else{
-               reply(Boom.notFound("Dosya bulunamadı"));
+        } else {
+            reply(Boom.notFound("Dosya bulunamadı"));
         }
 
 

@@ -1,9 +1,11 @@
 'use strict';
 
 var crypto = require('crypto');
+var Sequelize = require('sequelize');
 
 function QuestionModel(db) {
     this.questionSchema = db.question;
+    this.sequelize=db.sequelize;
 };
 
 QuestionModel.prototype.insertQuestion = function(question, cb) {
@@ -20,45 +22,58 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
     });
 };
 
-QuestionModel.prototype.fetchQuestions = function(app, cb) {
+QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, cb) {
 
-    this.questionSchema.findAndCountAll({
-        where: {
-            app: app,
-            is_deleted: false
-        },
-        limit: 10
-    }).then(function(questions) {
+    var rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
+        "CREATE TEMP TABLE tempUserQuestionTable AS " +
+        "select (row_number() over ()) as rn, * from question where question.app=? and question.is_deleted=FALSE " +
+        "EXCEPT " +
+        "select (row_number() over ()) as rn,q.* from answer a inner JOIN question q on a.question_id=q.id ";
+
+    rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
+
+    rawQuery = rawQuery + "select * from tempUserQuestionTable where rn in (" +
+        "select round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+        "from generate_series(1, (select count( * ) from tempUserQuestionTable))" +
+        ") limit ?;";
+
+
+    this.sequelize.query(rawQuery, 
+        { replacements: [app, (user_id) ? user_id : installation_id, limit], type: this.sequelize.QueryTypes.SELECT,model:this.questionSchema })
+    .then(function(questions) {
         cb(questions);
-    });
+    })
+
+
+
+
 };
 
 QuestionModel.prototype.increaseStats = function(answer, cb) {
 
-
-    this.questionSchema.increment()
-
-    var incrementField = 'skip_count';
+    var incrementField = { skip_count: Sequelize.literal('skip_count+1') }
 
     switch (answer.option) {
         case 'a':
-            incrementField = 'option_a_count';
+            incrementField = { option_a_count: Sequelize.literal('option_a_count+1') };
             break;
         case 'b':
-            incrementField = 'option_b_count';
+            incrementField = { option_b_count: Sequelize.literal('option_b_count+1') };
             break;
         case 's':
-            incrementField = 'skip_count';
+            incrementField = { skip_count: Sequelize.literal('skip_count+1') };
             break;
         default:
-            incrementField = 'skip_count';
+            incrementField = { skip_count: Sequelize.literal('skip_count+1') };
             break;
-
     }
-    this.questionSchema.increment(incrementField).then(function() {
+
+    this.questionSchema.update(incrementField, {
+        where: { id: answer.question_id }
+    }).then(function() {
         cb('OK');
     });
-    
+
 };
 
 

@@ -34,7 +34,7 @@ AnswerController.prototype.answer = function(request, reply) {
 
             },
             function(answer, callback) {
-               this.questionModel.increaseStats(answer, function(answered) {
+               self.questionModel.increaseStats(answer, function(answered) {
                 	callback(null,answer);
 
                 });
