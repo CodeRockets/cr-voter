@@ -9,8 +9,8 @@ module.exports = function(sequelize, DataTypes) {
             primaryKey: true,
             defaultValue: Sequelize.UUIDV1
         },
-        question_id: DataTypes.STRING,
-        user_id: DataTypes.STRING,
+        question_id: Sequelize.UUID,
+        user_id: Sequelize.UUID,
         text: DataTypes.STRING, 
         option: DataTypes.STRING,
         installation_id: DataTypes.STRING,

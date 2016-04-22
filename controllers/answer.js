@@ -25,7 +25,7 @@ AnswerController.prototype.answer = function(request, reply) {
                 newAnswer.question_id = request.payload.question_id;
                 newAnswer.user_id = request.payload.user_id;
                 newAnswer.text = request.payload.text;
-                newAnswer.client_id = request.payload.client_id;
+                newAnswer.client_id = request.payload.client_id.toString();
                 
                 self.answerModel.answer(newAnswer, function(answered) {
                 	callback(null,answered);

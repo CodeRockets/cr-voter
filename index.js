@@ -66,7 +66,7 @@ server.ext('onPreResponse', function(request, reply) {
 });
 
 //Sync with database
-db.sequelize.sync({ logging: true }).then(
+db.sequelize.sync({ logging: (process.env.DBLOG||false)  }).then(
 		
    function(result) {
    //Register the plugins

@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         },
         question_text: DataTypes.STRING,
         question_image: DataTypes.STRING,
-        user_id: DataTypes.STRING,
+        user_id: Sequelize.UUID,
         app: DataTypes.INTEGER, // 0: referandum, 1: kapıştır
         option_a: DataTypes.STRING,
         option_b: DataTypes.STRING,

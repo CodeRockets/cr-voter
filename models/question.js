@@ -5,7 +5,7 @@ var Sequelize = require('sequelize');
 
 function QuestionModel(db) {
     this.questionSchema = db.question;
-    this.sequelize=db.sequelize;
+    this.sequelize = db.sequelize;
 };
 
 QuestionModel.prototype.insertQuestion = function(question, cb) {
@@ -26,23 +26,22 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
 
     var rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
         "CREATE TEMP TABLE tempUserQuestionTable AS " +
-        "select (row_number() over ()) as rn, * from question where question.app=? and question.is_deleted=FALSE " +
+        "select  * from question where question.app=? and question.is_deleted=FALSE " +
         "EXCEPT " +
-        "select (row_number() over ()) as rn,q.* from answer a inner JOIN question q on a.question_id=q.id ";
+        "select q.* from answer a inner JOIN question q on a.question_id=q.id ";
 
     rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
 
-    rawQuery = rawQuery + "select * from tempUserQuestionTable where rn in (" +
-        "select round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
-        "from generate_series(1, (select count( * ) from tempUserQuestionTable))" +
+    rawQuery = rawQuery + "select * from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu where tu.rn in (" +
+        "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+        "from generate_series(1, 100)" +
         ") limit ?;";
 
 
-    this.sequelize.query(rawQuery, 
-        { replacements: [app, (user_id) ? user_id : installation_id, limit], type: this.sequelize.QueryTypes.SELECT,model:this.questionSchema })
-    .then(function(questions) {
-        cb(questions);
-    })
+    this.sequelize.query(rawQuery, { replacements: [app, (user_id) ? user_id : installation_id, limit], type: this.sequelize.QueryTypes.SELECT, model: this.questionSchema })
+        .then(function(questions) {
+            cb(questions);
+        })
 
 
 
