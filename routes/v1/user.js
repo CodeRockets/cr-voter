@@ -14,7 +14,7 @@ exports.register = function(server, options, next) {
     // Declare routes
     server.route([{
         method: 'POST',
-        path: '/v1/user',
+        path: '/v1/user',//Test
         config: {
             description: 'Creates a user with facebook api token',
             tags: ['api', 'user', 'add'],
