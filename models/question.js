@@ -20,6 +20,7 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
     this.questionSchema.findAll().then(function(questions) {
         cb(questions);
     });
+    
 };
 
 QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, cb) {

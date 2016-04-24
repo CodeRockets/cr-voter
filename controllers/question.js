@@ -52,6 +52,11 @@ QuestionController.prototype.all = function(request, reply) {
         reply(Boom.notFound(e.message));
     }
 };
+
+// [GET] /tasks/{id}
+QuestionController.prototype.questions = function(request, reply) {
+//questions
+};
 QuestionController.prototype.fetch = function(request, reply) {
     try {
 
