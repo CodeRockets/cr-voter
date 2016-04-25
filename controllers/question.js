@@ -54,7 +54,7 @@ QuestionController.prototype.all = function(request, reply) {
 };
 
 // [GET] /tasks/{id}
-QuestionController.prototype.questions = function(request, reply) {
+QuestionController.prototype.userquestions = function(request, reply) {
 //questions
 };
 QuestionController.prototype.fetch = function(request, reply) {

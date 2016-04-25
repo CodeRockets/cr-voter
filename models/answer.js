@@ -12,6 +12,7 @@ AnswerModel.prototype.answer = function(answer, cb) {
 
 
     var self = this;
+    
 
     var rawQuery = 'select * from answer where client_id=? and question_id=?::UUID and ';
 
