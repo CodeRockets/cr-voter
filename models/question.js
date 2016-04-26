@@ -23,6 +23,18 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
     
 };
 
+QuestionModel.prototype.userQuestions = function(user_id,limit,cb) {
+
+    this.questionSchema.findAll({
+        where: { user_id: user_id },
+        limit:limit,
+        is_deleted:false
+    }).then(function(questions) {
+        cb(questions);
+    });
+    
+};
+
 QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, cb) {
 
     var rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +

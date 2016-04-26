@@ -55,7 +55,16 @@ QuestionController.prototype.all = function(request, reply) {
 
 // [GET] /tasks/{id}
 QuestionController.prototype.userquestions = function(request, reply) {
-//questions
+
+        this.questionModel.userquestions(request.query.user_id, request.query.limit,function(data) {
+            reply({
+                data: {
+                    "count": data.length,
+                    "rows": data
+                }
+            });
+        });
+
 };
 QuestionController.prototype.fetch = function(request, reply) {
     try {
