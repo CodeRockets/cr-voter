@@ -65,15 +65,11 @@ exports.register = function(server, options, next) {
         }
     }, {
         method: 'POST',
-        path: '/v1/question',
+        path: '/v1/question/userquestions',
         config: {
             description: 'Add question route for both application',
             tags: ['api', 'question', 'add'],
-            notes: ['Referandum uygulamasından data post ederken **option_a** ve **option_b** parametrelerini göndermenize gerek yok.',
-                'Kapıştır uygulamasından data post ederken **question_text** ve **question_image** parametrelerini göndermenize gerek yok.',
-                'Success durumunda verilen response hata durumunda statusCode 200 den farklı olarak dünüyor.',
-                'İsteğin başarımını response status code dan anlayabilirsiniz. Dönen dataya bakmaya gerek yok.',
-                'Headerlar zorunlu.'
+            notes: ['user sorularını çeker'
             ],
 
             handler: questionController.addQuestion,
