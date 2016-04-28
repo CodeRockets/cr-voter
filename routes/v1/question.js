@@ -75,9 +75,7 @@ exports.register = function(server, options, next) {
             handler: questionController.addQuestion,
             validate: {
                 payload: Joi.object().keys({
-                    question_text: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru metni'),
-                    question_image: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru resim linki'),
-                    user_id: Joi.string().required().description('User id'),
+                                        user_id: Joi.string().required().description('User id'),
                     app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
                     option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
                     option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
