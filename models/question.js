@@ -20,19 +20,19 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
     this.questionSchema.findAll().then(function(questions) {
         cb(questions);
     });
-    
+
 };
 
-QuestionModel.prototype.userQuestions = function(user_id,limit,cb) {
+QuestionModel.prototype.userQuestions = function(app, user_id, limit, cb) {
 
     this.questionSchema.findAll({
-        where: { user_id: user_id },
-        limit:limit,
-        is_deleted:false
+        where: { user_id: user_id, app: app },
+        limit: limit,
+        is_deleted: false
     }).then(function(questions) {
         cb(questions);
     });
-    
+
 };
 
 QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, cb) {

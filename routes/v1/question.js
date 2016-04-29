@@ -72,13 +72,12 @@ exports.register = function(server, options, next) {
             notes: ['user sorularını çeker'
             ],
 
-            handler: questionController.addQuestion,
+            handler: questionController.userQuestion,
             validate: {
-                payload: Joi.object().keys({
-                                        user_id: Joi.string().required().description('User id'),
+                payload: Joi.object().keys({                    
                     app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
-                    option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
-                    option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
+                    limit:Joi.number().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                    user_id:Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10'),
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
