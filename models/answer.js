@@ -12,17 +12,16 @@ AnswerModel.prototype.answer = function(answer, cb) {
 
 
     var self = this;
-    
 
     var rawQuery = 'select * from answer where client_id=? and question_id=?::UUID and ';
 
-    if (answer.user_id.length > 0) {
+    if (answer.user_id) {
         rawQuery = rawQuery + 'answer.user_id=?::UUID;'
     } else {
-        rawQuery = rawQuery + 'answer.installation_id=?::UUID;'
+        rawQuery = rawQuery + 'answer.installation_id=?;'
     }
 
-    self.db.sequelize.query(rawQuery, { replacements: [answer.client_id, answer.question_id, (answer.user_id.length > 0) ? answer.user_id : answer.installation_id], type: self.db.sequelize.QueryTypes.SELECT, model: self.answerSchema })
+    self.db.sequelize.query(rawQuery, { replacements: [answer.client_id, answer.question_id, answer.user_id  ? answer.user_id : answer.installation_id], type: self.db.sequelize.QueryTypes.SELECT, model: self.answerSchema })
         .then(function(answerList) {
             if (answerList.length == 0) {
                 self.answerSchema.create(answer).then(function(createdAnswer) {

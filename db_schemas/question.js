@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
         skip_count: { type: DataTypes.INTEGER, defaultValue: 0 },
         created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false }
+        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
 
     }, {
         tableName: 'question',

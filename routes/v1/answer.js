@@ -24,7 +24,7 @@ exports.register = function(server, options, next) {
                 payload: Joi.object().keys({
                     option: Joi.string().required().description(' soldaki "a" sağdaki "b" skip "s" '),
                     question_id: Joi.string().required().description('question_id'),
-                    user_id: Joi.string().required().description('user_id'),
+                    user_id: Joi.string().required().allow('').description('user_id'),
                     text: Joi.string().required().description('answer text or image link'),
                     client_id: Joi.number().required().description('kapistir için 1 referandum için 0')
                 }),

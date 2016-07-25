@@ -14,7 +14,7 @@ exports.register = function(server, options, next) {
     // Declare routes
     server.route([{
         method: 'POST',
-        path: '/v1/user',//Test
+        path: '/v1/user',
         config: {
             description: 'Creates a user with facebook api token',
             tags: ['api', 'user', 'add'],
@@ -51,6 +51,46 @@ exports.register = function(server, options, next) {
                                 "error": null,
                                 "message": "success",
                                 "timestamp": 1460067996068
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
+    }, {
+        method: 'GET',
+        path: '/v1/user/questions',
+        config: {
+            description: 'Fetch asked questions of users',
+            tags: ['api', 'question', 'user', 'fetch'],
+            notes: ['Her istekte limit değeri kadar soru getirir.'],
+            handler: userController.fetchUserQuestions,
+            validate: {
+                params: {
+                    app: Joi.number().min(0).max(1).description('App referandum için 0, kapistir için 1'),
+                    limit: Joi.number().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                    user_id: Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                },
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                statusCode: 200,
+                                error: null,
+                                message: "success",
+                                timestamp: Date.now(),
+                                data: {
+                                    "count": 17,
+                                    "rows": 'question array'
+                                }
                             }).label('Result')
                         }
                     }

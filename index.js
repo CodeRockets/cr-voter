@@ -11,9 +11,9 @@ var server = new Hapi.Server({ debug: { request: ['info', 'error'], log: ['info'
 
 
 server.connection({
-    //host: '0.0.0.0',
+    host: '0.0.0.0',
     
-    host: 'localhost',
+   // host: 'localhost',
     		port: process.env.PORT || 8000
 	});
 
@@ -66,7 +66,7 @@ server.ext('onPreResponse', function(request, reply) {
 });
 
 //Sync with database
-db.sequelize.sync({ logging: (process.env.DBLOG||false)  }).then(
+db.sequelize.sync({ logging: ((process.env.DBLOG==1)||false) }).then(
 		
    function(result) {
    //Register the plugins

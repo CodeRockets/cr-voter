@@ -26,6 +26,10 @@ AnswerController.prototype.answer = function(request, reply) {
                 newAnswer.user_id = request.payload.user_id;
                 newAnswer.text = request.payload.text;
                 newAnswer.client_id = request.payload.client_id.toString();
+
+                if(!request.payload.user_id||request.payload.user_id.length==0){
+                    delete newAnswer.user_id;
+                }
                 
                 self.answerModel.answer(newAnswer, function(answered) {
                 	callback(null,answered);

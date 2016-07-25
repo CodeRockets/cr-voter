@@ -2,25 +2,22 @@
 
 var Boom = require('boom');
 var UserModel = require('../models/user');
+var QuestionModel = require('../models/question');
 var FB = require('fb');
 var cloudinary = require('cloudinary');
 var async = require('async');
+var config_params    = require(__dirname + '/../config/config.json');
 
 
 function UserController(db) {
     this.userModel = new UserModel(db);
-
+    this.questionModel = new QuestionModel(db);
 };
 
 UserController.prototype.signup = function(request, reply) {
     try {
 
-        cloudinary.config({
-            cloud_name: 'dlxdlp9jz',
-            api_key: '754935824337155',
-            api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI'
-        });
-
+        cloudinary.config(config_params["cloudinary"]);
 
 
         var self = this;
@@ -39,7 +36,7 @@ UserController.prototype.signup = function(request, reply) {
                     data.facebook_id = res.id;
                     data.name = res.name;
                     data.profile_img = res.picture.data.url;
-                    data.imei=request.headers['x-voter-installation'];
+                    data.imei = request.headers['x-voter-installation'];
                     callback(null, data);
                 });
 
@@ -56,7 +53,7 @@ UserController.prototype.signup = function(request, reply) {
                 self.userModel.upsert(user_data, function(createdUser) {
                     callback(null, createdUser);
                 });
-                
+
             }
         ], function(err, result) {
             if (!result || err) {
@@ -71,6 +68,23 @@ UserController.prototype.signup = function(request, reply) {
         reply(Boom.badRequest(e.message));
     }
 
+};
+
+UserController.prototype.fetchUserQuestions = function(request, reply) {
+    try {
+
+        this.questionModel.userQuestions(request.query.user_id,request.query.app,request.query.limit, function(data) {
+            reply({
+                data: {
+                    "count": data.length,
+                    "rows": data
+                }
+            });
+        });
+
+    } catch (e) {
+        reply(Boom.notFound(e.message));
+    }
 };
 
 

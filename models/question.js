@@ -20,44 +20,66 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
     this.questionSchema.findAll().then(function(questions) {
         cb(questions);
     });
-
 };
 
-QuestionModel.prototype.userQuestions = function(app, user_id, limit, cb) {
+QuestionModel.prototype.userQuestions = function(user_id, app, limit, cb) {
 
     this.questionSchema.findAll({
-        where: { user_id: user_id, app: app },
-        limit: limit,
-        is_deleted: false
+        where: {
+            user_id: user_id,
+            app: app,
+            is_deleted: false
+        },
+        limit: limit
     }).then(function(questions) {
         cb(questions);
     });
-
 };
 
-QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, cb) {
+QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, debug, cb) {
 
-    var rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
-        "CREATE TEMP TABLE tempUserQuestionTable AS " +
-        "select  * from question where question.app=? and question.is_deleted=FALSE " +
-        "EXCEPT " +
-        "select q.* from answer a inner JOIN question q on a.question_id=q.id ";
+    var debugMode = debug ? debug : 0;
+    var rawQuery = "";
+    if (debugMode == 1) {
+        rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
+            "CREATE TEMP TABLE tempUserQuestionTable AS " +
+            "select  * from question where question.app=? and question.is_deleted=FALSE;";
 
-    rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
+        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img, u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
+            "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+            "from generate_series(1, 100)" +
+            ") limit ?;";
+        this.sequelize.query(rawQuery, {
+                replacements: [app, limit],
+                type: this.sequelize.QueryTypes.SELECT,
+                // model: this.questionSchema
+            })
+            .then(function(questions) {
+                cb(questions);
+            });
 
-    rawQuery = rawQuery + "select * from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu where tu.rn in (" +
-        "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
-        "from generate_series(1, 100)" +
-        ") limit ?;";
+    } else {
+        rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
+            "CREATE TEMP TABLE tempUserQuestionTable AS " +
+            "select  * from question where question.app=? and question.is_deleted=FALSE " +
+            "EXCEPT " +
+            "select q.* from answer a inner JOIN question q on a.question_id=q.id ";
 
+        rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
 
-    this.sequelize.query(rawQuery, { replacements: [app, (user_id) ? user_id : installation_id, limit], type: this.sequelize.QueryTypes.SELECT, model: this.questionSchema })
-        .then(function(questions) {
-            cb(questions);
-        })
-
-
-
+        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img, u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
+            "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+            "from generate_series(1, 100)" +
+            ") limit ?;";
+        this.sequelize.query(rawQuery, {
+                replacements: [app, (user_id) ? user_id : installation_id, limit],
+                type: this.sequelize.QueryTypes.SELECT,
+                // model: this.questionSchema
+            })
+            .then(function(questions) {
+                cb(questions);
+            });
+    }
 
 };
 

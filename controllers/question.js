@@ -4,6 +4,7 @@ var Boom = require('boom');
 var QuestionModel = require('../models/question');
 var cloudinary = require('cloudinary');
 var fs = require('fs');
+var config_params    = require(__dirname + '/../config/config.json');
 
 
 function QuestionController(db) {
@@ -53,8 +54,7 @@ QuestionController.prototype.all = function(request, reply) {
     }
 };
 
-// [GET] /tasks/{id}
-QuestionController.prototype.userquestions = function(request, reply) {
+QuestionController.prototype.userQuestions = function(request, reply) {
 
         this.questionModel.userquestions(request.params.app, request.query.user_id, request.query.limit,function(data) {
             reply({
@@ -66,12 +66,13 @@ QuestionController.prototype.userquestions = function(request, reply) {
         });
 
 };
+
 QuestionController.prototype.fetch = function(request, reply) {
     try {
 
         var uId = (request.query.user_id || request.query.user_id.length > 0) ? request.query.user_id : null;
 
-        this.questionModel.fetchQuestions(request.params.app, request.query.limit, uId, request.headers['x-voter-installation'], function(data) {
+        this.questionModel.fetchQuestions(request.params.app, request.query.limit, uId, request.headers['x-voter-installation'],request.query.debug, function(data) {
             reply({
                 data: {
                     "count": data.length,
@@ -86,14 +87,11 @@ QuestionController.prototype.fetch = function(request, reply) {
 };
 
 
+
 QuestionController.prototype.upload = function(request, reply) {
     try {
 
-        cloudinary.config({
-            cloud_name: 'dlxdlp9jz',
-            api_key: '754935824337155',
-            api_secret: '50fqLOOMjIXPNIckPS7znr3lYnI'
-        });
+        cloudinary.config(config_params["cloudinary"]);
 
         var data = request.payload;
         var dir = __dirname + "/../uploads";
