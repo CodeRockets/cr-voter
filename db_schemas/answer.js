@@ -17,7 +17,9 @@ module.exports = function(sequelize, DataTypes) {
         client_id: DataTypes.STRING,      
         created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false }
+        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
+        is_abuse: { type: DataTypes.BOOLEAN, defaultValue: false },
+        is_favorite: { type: DataTypes.BOOLEAN, defaultValue: false }
 
     }, {
         tableName: 'answer',

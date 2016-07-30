@@ -67,7 +67,7 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
 
         rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
 
-        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img, u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
+        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img,u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
             "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
             "from generate_series(1, 100)" +
             ") limit ?;";
@@ -82,6 +82,28 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
     }
 
 };
+
+
+
+QuestionModel.prototype.getAllKapistirForWeb = function(cb) {
+
+   
+    var rawQuery = 'select tu.*,u.profile_img as asker_profile_img,u.facebook_id,  u.name as asker_name from question as tu inner JOIN "user" as u on u.id=tu.user_id where tu.app=1 ORDER BY created_at desc';
+
+        this.sequelize.query(rawQuery, {
+                //replacements: [app, (user_id) ? user_id : installation_id, limit],
+                type: this.sequelize.QueryTypes.SELECT,
+                // model: this.questionSchema
+            })
+            .then(function(questions) {
+                cb(questions);
+            });
+   
+
+};
+
+
+
 
 QuestionModel.prototype.increaseStats = function(answer, cb) {
 
@@ -101,6 +123,31 @@ QuestionModel.prototype.increaseStats = function(answer, cb) {
             incrementField = { skip_count: Sequelize.literal('skip_count+1') };
             break;
     }
+
+    this.questionSchema.update(incrementField, {
+        where: { id: answer.question_id }
+    }).then(function() {
+        cb('OK');
+    });
+
+};
+
+
+QuestionModel.prototype.increaseAbuse = function(answer, cb) {
+
+    var incrementField = { abuse_count: Sequelize.literal('abuse_count+1') }    
+
+    this.questionSchema.update(incrementField, {
+        where: { id: answer.question_id }
+    }).then(function() {
+        cb('OK');
+    });
+
+};
+
+QuestionModel.prototype.increaseFavorite = function(answer, cb) {
+
+    var incrementField = { favorite_count: Sequelize.literal('favorite_count+1') }    
 
     this.questionSchema.update(incrementField, {
         where: { id: answer.question_id }

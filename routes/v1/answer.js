@@ -64,6 +64,106 @@ exports.register = function(server, options, next) {
                 }
             }
         }
+    },{
+        method: 'POST',
+        path: '/v1/reportabuse',
+        config: {
+            description: 'Abuse reporting route',
+            tags: ['api', 'user', 'add'],
+            notes: ['Uygunsuz içerik şikayeti için kullanılır', 'questiondaki abuse_countu artırır, eğer cevap verilmediyden çağırıldıysa skip cevvabı verilir' ],
+            handler: answerController.reportAbuse,
+            validate: {
+                payload: Joi.object().keys({
+                    question_id: Joi.string().required().description('question_id'),
+                    user_id: Joi.string().required().allow('').description('user_id'),
+                    client_id: Joi.number().required().description('kapistir için 1 referandum için 0')
+                }),
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                
+                                    "data": {
+                                        "id": "f0c236d0-0765-11e6-826e-b336e65223ae",
+                                        "created_at": "2016-04-21T02:08:29.000Z",
+                                        "updated_at": "2016-04-21T02:08:29.000Z",
+                                        "is_deleted": false,
+                                        "installation_id": "asdasdasdu88asd",
+                                        "option": "a",
+                                        "question_id": "89160c90-0676-11e6-9165-7f13b5d750e4",
+                                        "user_id": "2d0387a0-0682-11e6-a473-e30ed6cf5986",
+                                        "text": "http://res.cloudinary.com/dlxdlp9jz/image/upload/v1461101685/udr8d8sxx0h9myuzzp94.jpg",
+                                        "client_id": "1"
+                                    },
+                                    "statusCode": 200,
+                                    "error": null,
+                                    "message": "success",
+                                    "timestamp": 1461204510133
+                                
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
+    },{
+        method: 'POST',
+        path: '/v1/favorite',
+        config: {
+            description: 'Set favorite question',
+            tags: ['api', 'user', 'add'],
+            notes: ['soruyu favorileme için route', 'bu sayede favori ettiği soruları takip edebilirler' ],
+            handler: answerController.setFavorite,
+            validate: {
+                payload: Joi.object().keys({
+                    question_id: Joi.string().required().description('question_id'),
+                    user_id: Joi.string().required().allow('').description('user_id'),
+                    client_id: Joi.number().required().description('kapistir için 1 referandum için 0')
+                }),
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                
+                                    "data": {
+                                        "id": "f0c236d0-0765-11e6-826e-b336e65223ae",
+                                        "created_at": "2016-04-21T02:08:29.000Z",
+                                        "updated_at": "2016-04-21T02:08:29.000Z",
+                                        "is_deleted": false,
+                                        "installation_id": "asdasdasdu88asd",
+                                        "option": "a",
+                                        "question_id": "89160c90-0676-11e6-9165-7f13b5d750e4",
+                                        "user_id": "2d0387a0-0682-11e6-a473-e30ed6cf5986",
+                                        "text": "http://res.cloudinary.com/dlxdlp9jz/image/upload/v1461101685/udr8d8sxx0h9myuzzp94.jpg",
+                                        "client_id": "1"
+                                    },
+                                    "statusCode": 200,
+                                    "error": null,
+                                    "message": "success",
+                                    "timestamp": 1461204510133
+                                
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
     }]);
 
     next();

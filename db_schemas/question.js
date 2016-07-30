@@ -21,6 +21,8 @@ module.exports = function(sequelize, DataTypes) {
         created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
+        abuse_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+        favorite_count: { type: DataTypes.INTEGER, defaultValue: 0 }
 
     }, {
         tableName: 'question',
