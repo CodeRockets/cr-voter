@@ -6,7 +6,7 @@ var QuestionModel = require('../models/question');
 var FB = require('fb');
 var cloudinary = require('cloudinary');
 var async = require('async');
-var config_params    = require(__dirname + '/../config/config.json');
+var config_params = require(__dirname + '/../config/config.json');
 
 
 function UserController(db) {
@@ -72,14 +72,42 @@ UserController.prototype.signup = function(request, reply) {
 
 UserController.prototype.fetchUserQuestions = function(request, reply) {
     try {
+var self=this;
+        var data = {};
+        async.waterfall([
+            function(callback) {
 
-        this.questionModel.userQuestions(request.query.user_id,request.query.app,request.query.limit, function(data) {
-            reply({
-                data: {
-                    "count": data.length,
-                    "rows": data
-                }
-            });
+                self.questionModel.userQuestions(request.query.user_id,request.query.app,  request.query.limit, function(q) {
+                    data.questions = {
+                        "count": q.length,
+                        "rows": q
+                    };
+                    callback(null, data);
+
+                });
+
+
+            },
+            function(data, callback) {
+
+                self.questionModel.userFavorites( request.query.user_id,request.query.app, request.query.limit, function(f) {
+                    data.favorites = {
+                        "count": f.length,
+                        "rows": f
+                    };
+                    callback(null, data);
+
+                });
+
+
+            }
+        ], function(err, result) {
+            if (!result || err) {
+                reply(Boom.badImplementation(JSON.stringify(err)));
+                return;
+            } else {
+                reply({data:result});
+            }
         });
 
     } catch (e) {

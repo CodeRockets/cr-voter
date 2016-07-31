@@ -100,7 +100,7 @@ AnswerModel.prototype.setFavorite = function(answer, cb) {
     self.db.sequelize.query(rawQuery, { replacements: [answer.client_id, answer.question_id, answer.user_id ? answer.user_id : answer.installation_id], type: self.db.sequelize.QueryTypes.SELECT, model: self.answerSchema })
         .then(function(answerList) {
                 if (answerList.length == 0) {
-                    answer.is_favorite = true;
+                    answer.is_favorite = !answer.unfavorite;
                     self.answerSchema.create(answer).then(function(createdAnswer) {
                         cb(createdAnswer);
                     });
@@ -108,7 +108,7 @@ AnswerModel.prototype.setFavorite = function(answer, cb) {
 
                     var dbAnswer = answerList[0];
                     dbAnswer.update({
-                        is_favorite : true
+                        is_favorite : !answer.unfavorite
                     }).then(function() {
                         cb(dbAnswer);
                     });

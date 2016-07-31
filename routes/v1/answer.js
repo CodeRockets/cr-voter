@@ -126,7 +126,8 @@ exports.register = function(server, options, next) {
                 payload: Joi.object().keys({
                     question_id: Joi.string().required().description('question_id'),
                     user_id: Joi.string().required().allow('').description('user_id'),
-                    client_id: Joi.number().required().description('kapistir için 1 referandum için 0')
+                    client_id: Joi.number().required().description('kapistir için 1 referandum için 0'),
+                    unfavorite:Joi.boolean().required().description('favori için false olmalı, unfavorite için true olmalı')
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),

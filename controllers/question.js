@@ -5,6 +5,7 @@ var QuestionModel = require('../models/question');
 var cloudinary = require('cloudinary');
 var fs = require('fs');
 var config_params    = require(__dirname + '/../config/config.json');
+var async = require('async');
 
 
 function QuestionController(db) {
@@ -56,7 +57,7 @@ QuestionController.prototype.all = function(request, reply) {
 
 QuestionController.prototype.userQuestions = function(request, reply) {
 
-        this.questionModel.userquestions(request.params.app, request.query.user_id, request.query.limit,function(data) {
+        this.questionModel.userQuestions(request.params.app, request.query.user_id, request.query.limit,function(data) {
             reply({
                 data: {
                     "count": data.length,

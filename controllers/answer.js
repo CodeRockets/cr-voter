@@ -119,6 +119,7 @@ AnswerController.prototype.setFavorite = function(request, reply) {
                 newAnswer.question_id = request.payload.question_id;
                 newAnswer.user_id = request.payload.user_id;
                 newAnswer.text = '';
+                newAnswer.unfavorite=request.payload.unfavorite;
                 newAnswer.client_id = request.payload.client_id.toString();
 
                 if(!request.payload.user_id||request.payload.user_id.length==0){
@@ -126,13 +127,13 @@ AnswerController.prototype.setFavorite = function(request, reply) {
                 }
                 
                 self.answerModel.setFavorite(newAnswer, function(answered) {
-                    callback(null,answered);
+                    callback(null,newAnswer);
 
                 });
 
             },
             function(answer, callback) {
-               self.questionModel.increaseAbuse(answer, function(answered) {
+               self.questionModel.increaseFavorite(answer, function(answered) {
                     callback(null,answer);
 
                 });

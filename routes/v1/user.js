@@ -88,8 +88,12 @@ exports.register = function(server, options, next) {
                                 message: "success",
                                 timestamp: Date.now(),
                                 data: {
-                                    "count": 17,
-                                    "rows": 'question array'
+                                    "questions": {
+                                        "count": 17,
+                                        "rows": 'question array'},
+                                    "favorites": {
+                                        "count": 17,
+                                        "rows": 'favorites array'}, 
                                 }
                             }).label('Result')
                         }

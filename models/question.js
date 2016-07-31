@@ -36,6 +36,21 @@ QuestionModel.prototype.userQuestions = function(user_id, app, limit, cb) {
     });
 };
 
+QuestionModel.prototype.userFavorites = function(user_id, app, limit, cb) {
+
+    var rawQuery = 'select * from question where id in(SELECT question_id from answer where user_id=? and answer.is_favorite=true)' +
+        'and question.is_deleted=FALSE and question.app=? limit ?;'
+    this.sequelize.query(rawQuery, {
+            replacements: [user_id, app, limit],
+            type: this.sequelize.QueryTypes.SELECT,
+            // model: this.questionSchema
+        })
+        .then(function(questions) {
+            cb(questions);
+        });
+
+};
+
 QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installation_id, debug, cb) {
 
     var debugMode = debug ? debug : 0;
@@ -87,18 +102,18 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
 
 QuestionModel.prototype.getAllKapistirForWeb = function(cb) {
 
-   
+
     var rawQuery = 'select tu.*,u.profile_img as asker_profile_img,u.facebook_id,  u.name as asker_name from question as tu inner JOIN "user" as u on u.id=tu.user_id where tu.app=1 ORDER BY created_at desc';
 
-        this.sequelize.query(rawQuery, {
-                //replacements: [app, (user_id) ? user_id : installation_id, limit],
-                type: this.sequelize.QueryTypes.SELECT,
-                // model: this.questionSchema
-            })
-            .then(function(questions) {
-                cb(questions);
-            });
-   
+    this.sequelize.query(rawQuery, {
+            //replacements: [app, (user_id) ? user_id : installation_id, limit],
+            type: this.sequelize.QueryTypes.SELECT,
+            // model: this.questionSchema
+        })
+        .then(function(questions) {
+            cb(questions);
+        });
+
 
 };
 
@@ -135,7 +150,7 @@ QuestionModel.prototype.increaseStats = function(answer, cb) {
 
 QuestionModel.prototype.increaseAbuse = function(answer, cb) {
 
-    var incrementField = { abuse_count: Sequelize.literal('abuse_count+1') }    
+    var incrementField = { abuse_count: Sequelize.literal('abuse_count+1') }
 
     this.questionSchema.update(incrementField, {
         where: { id: answer.question_id }
@@ -146,8 +161,11 @@ QuestionModel.prototype.increaseAbuse = function(answer, cb) {
 };
 
 QuestionModel.prototype.increaseFavorite = function(answer, cb) {
+    var incrementField = { favorite_count: Sequelize.literal('favorite_count+1') }
+    if (answer.unfavorite===true) {
+        incrementField = { favorite_count: Sequelize.literal('favorite_count-1') }
+    }
 
-    var incrementField = { favorite_count: Sequelize.literal('favorite_count+1') }    
 
     this.questionSchema.update(incrementField, {
         where: { id: answer.question_id }
