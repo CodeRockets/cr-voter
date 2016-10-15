@@ -87,6 +87,21 @@ QuestionController.prototype.fetch = function(request, reply) {
     }
 };
 
+QuestionController.prototype.delete = function(request, reply) {
+    try {
+
+        this.questionModel.deleteQuestion(request.params.id, function(data) {
+            reply({
+                data: null
+            });
+        });
+
+    } catch (e) {
+        reply(Boom.notFound(e.message));
+    }
+};
+
+
 
 
 QuestionController.prototype.upload = function(request, reply) {

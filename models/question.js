@@ -55,7 +55,29 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
 
     var debugMode = debug ? debug : 0;
     var rawQuery = "";
-    if (debugMode == 1) {
+    var _replacements=[user_id,app, limit];
+    if(debugMode==1){
+        rawQuery='select * from proc_fetch_questions_by_user_id_debug(cast(? as UUID),?,?)';
+    }else{
+        rawQuery='select * from proc_fetch_questions_by_user_id(cast(? as UUID),?,?)';
+        if(!user_id){
+            rawQuery='select * from proc_fetch_questions_by_imei(?,?,?)';
+            _replacements=[installation_id,app, limit];
+        }
+    }
+
+
+     this.sequelize.query(rawQuery, {
+                replacements: _replacements,
+                type: this.sequelize.QueryTypes.SELECT,
+                // model: this.questionSchema
+            })
+            .then(function(questions) {
+                cb(questions);
+            });
+
+
+/*    if (debugMode == 1) {
         rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
             "CREATE TEMP TABLE tempUserQuestionTable AS " +
             "select  * from question where question.app=? and question.is_deleted=FALSE;";
@@ -64,14 +86,7 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
             "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
             "from generate_series(1, 100)" +
             ") limit ?;";
-        this.sequelize.query(rawQuery, {
-                replacements: [app, limit],
-                type: this.sequelize.QueryTypes.SELECT,
-                // model: this.questionSchema
-            })
-            .then(function(questions) {
-                cb(questions);
-            });
+       
 
     } else {
         rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
@@ -94,7 +109,7 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
             .then(function(questions) {
                 cb(questions);
             });
-    }
+    }*/
 
 };
 
@@ -118,7 +133,15 @@ QuestionModel.prototype.getAllKapistirForWeb = function(cb) {
 };
 
 
+QuestionModel.prototype.deleteQuestion = function(id, cb) {
 
+    this.questionSchema.update({is_deleted:"true"}, {
+        where: { id: id }
+    }).then(function() {
+        cb('OK');
+    });
+
+};
 
 QuestionModel.prototype.increaseStats = function(answer, cb) {
 

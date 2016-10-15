@@ -66,6 +66,39 @@ exports.register = function(server, options, next) {
         }
     }, {
         method: 'POST',
+        path: '/v1/question/delete/{id}',
+        config: {
+            description: 'Delete question',
+            tags: ['api', 'question', 'delete'],
+            notes: ['idsi verilen soruyu siler'],
+            handler: questionController.delete,
+            validate: {
+                
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                statusCode: 200,
+                                error: null,
+                                message: "success",
+                                timestamp: Date.now(),
+                                data: null
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
+    },{
+        method: 'POST',
         path: '/v1/question',
         config: {
             description: 'Add question route for both application',

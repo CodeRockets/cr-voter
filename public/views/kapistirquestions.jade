@@ -1,0 +1,52 @@
+doctype html
+html
+  head
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', integrity='sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u', crossorigin='anonymous')
+    link(href='/../public/css/kapistir.css', rel='stylesheet')
+    title Kapıştır sorular
+  body
+    h1 KAPIŞTIR
+    .container(style='margin-top:10px;')
+      each datarows,index in data
+        .row.form-group
+          each val,indexcol in datarows                      
+            .col-xs-12.col-md-6
+              .panel.panel-default
+                .panel-heading
+                  h3.panel-title
+                    a(href='https://www.facebook.com/#{val.facebook_id}', target='_blank') #{val.asker_name}
+                .panel-image.hide-panel-body
+                  .row.img-row
+                    .col-md-6.img-col
+                      img.panel-image-preview.right-img(src='/../public/assets/load.png', data-src='#{val.option_a}')
+                    .col-md-6.img-col
+                      img.panel-image-preview.left-img(src='/../public/assets/load.png', data-src='#{val.option_b}')
+                  label(for='toggle-#{index}-#{indexcol}')
+                input.panel-image-toggle(id='toggle-#{index}-#{indexcol}',type='checkbox')
+                .panel-body
+                  - var toplam = val.option_a_count+val.option_b_count+val.skip_count
+                  h4 TOPLAM OY: #{toplam} 
+                  p
+                    ul
+                      li id: #{val.id} 
+                      li user_id: #{val.user_id} 
+                      li date: #{val.updated_at} 
+                      li isdeleted: #{val.is_deleted}
+                .panel-footer.text-center
+                  h4 A: #{val.option_a_count}  B: #{val.option_b_count}  S: #{val.skip_count} 
+            
+  
+
+
+    
+              
+             
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+    // Latest compiled and minified JavaScript
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa', crossorigin='anonymous')
+    script(src='/../public/js/unveil.js')
+    script(type='text/javascript').
+      $(document).ready(function() {
+      $("img").unveil();
+      });
+

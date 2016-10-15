@@ -15,7 +15,11 @@ module.exports = function(sequelize, DataTypes) {
         imei: DataTypes.STRING, // 0: referandum, 1: kapıştır   
         created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false }
+        is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
+        friends: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: null },
+        app: DataTypes.INTEGER,
+        last_fb_token: DataTypes.STRING
+
 
     }, {
         tableName: 'user',

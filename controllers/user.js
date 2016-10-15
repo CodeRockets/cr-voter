@@ -3,7 +3,7 @@
 var Boom = require('boom');
 var UserModel = require('../models/user');
 var QuestionModel = require('../models/question');
-var FB = require('fb');
+var graph = require('fbgraph');
 var cloudinary = require('cloudinary');
 var async = require('async');
 var config_params = require(__dirname + '/../config/config.json');
@@ -25,20 +25,54 @@ UserController.prototype.signup = function(request, reply) {
         async.waterfall([
             function(callback) {
 
-                FB.api('me', { fields: ['id', 'name', 'picture.type(large)'], access_token: request.payload.token }, function(res) {
+                graph.setAccessToken(request.payload.token);
 
+                graph.get("me?fields=id,name,picture.type(large),friends.limit(500)", function(err, res) {
                     if (!res || res.error) {
                         callback(res.error, null);
                         return;
                     }
 
                     var data = {};
+                    data.friends=[]
                     data.facebook_id = res.id;
                     data.name = res.name;
                     data.profile_img = res.picture.data.url;
                     data.imei = request.headers['x-voter-installation'];
+                    data.app=parseInt(request.headers['x-voter-client-id']);
+                    data.last_fb_token=request.payload.token;
+
+                    for (var i = 0; i < res.friends.data.length; i++) {
+                        
+                          data.friends.push(res.friends.data[i].id);
+                    }
+                  
+
                     callback(null, data);
                 });
+
+                // FB.api('me', { fields: ['id', 'name', 'picture.type(large)','friends.limit(500)'], access_token: request.payload.token }, function(res) {
+
+                //     if (!res || res.error) {
+                //         callback(res.error, null);
+                //         return;
+                //     }
+
+                //     var data = {};
+                //     data.friends=[]
+                //     data.facebook_id = res.id;
+                //     data.name = res.name;
+                //     data.profile_img = res.picture.data.url;
+                //     data.imei = request.headers['x-voter-installation'];
+
+                //     for (var i = 0; i < res.friends.data.length; i++) {
+                        
+                //           data.friends.push(res.friends.data[i].id);
+                //     }
+                  
+
+                //     callback(null, data);
+                // });
 
 
             },

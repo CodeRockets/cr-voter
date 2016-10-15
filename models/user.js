@@ -24,7 +24,10 @@ UserModel.prototype.upsert = function(user, cb) {
         } else {
             var mUser = userList[0];
             mUser.update({
-                imei: user.imei
+                app:user.app,
+                last_fb_token:user.last_fb_token,
+                imei: user.imei,
+                friends:user.friends
             }).then(function() {
                 cb(mUser);
             })
