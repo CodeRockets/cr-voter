@@ -45,16 +45,31 @@ QuestionModel.prototype.showAllQuestions = function(cb) {
 
 QuestionModel.prototype.userQuestions = function(user_id, app, limit, cb) {
 
-    this.questionSchema.findAll({
-        where: {
-            user_id: user_id,
-            app: app,
-            is_deleted: false
-        },
-        limit: limit
-    }).then(function(questions) {
-        cb(questions);
-    });
+
+    var rawQuery = "";
+    var _replacements = [user_id, app, limit];
+
+    rawQuery = 'select * from proc_fetch_user_questions(cast(? as UUID),?,?)';
+
+    this.sequelize.query(rawQuery, {
+            replacements: _replacements,
+            type: this.sequelize.QueryTypes.SELECT,
+        })
+        .then(function(questions) {
+            cb(questions);
+        });
+
+
+    // this.questionSchema.findAll({
+    //     where: {
+    //         user_id: user_id,
+    //         app: app,
+    //         is_deleted: false
+    //     },
+    //     limit: limit
+    // }).then(function(questions) {
+    //     cb(questions);
+    // });
 };
 
 QuestionModel.prototype.userFavorites = function(user_id, app, limit, cb) {
