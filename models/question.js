@@ -59,7 +59,7 @@ QuestionModel.prototype.userQuestions = function(user_id, app, limit, cb) {
             cb(questions);
         });
 
-
+//TESTING
     // this.questionSchema.findAll({
     //     where: {
     //         user_id: user_id,
