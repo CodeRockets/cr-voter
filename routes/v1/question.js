@@ -34,8 +34,8 @@ exports.register = function(server, options, next) {
             validate: {
                 params: {
                     app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
-                    limit:Joi.number().description('Kaç adet soru getireceği bilgisi, default: 10'),
-                    user_id:Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                    limit: Joi.number().description('Kaç adet soru getireceği bilgisi, default: 10'),
+                    user_id: Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10'),
                     debug: Joi.number().min(0).max(1).description('Debug için 1'),
                 },
                 headers: Joi.object({
@@ -73,7 +73,7 @@ exports.register = function(server, options, next) {
             notes: ['idsi verilen soruyu siler'],
             handler: questionController.delete,
             validate: {
-                
+
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
                     'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
@@ -97,18 +97,18 @@ exports.register = function(server, options, next) {
                 }
             }
         }
-    },{
+    }, {
         method: 'GET',
         path: '/v1/question/get/{id}',
         config: {
             description: 'Get one question',
             tags: ['api', 'question', 'get'],
-            notes: ['idsi verilen soruyu siler'],
+            notes: ['ÖNEMLİ user_id uuid olmak zorunda!!!!'],
             handler: questionController.getOne,
             validate: {
-                  params: {
-                    app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),                   
-                    user_id:Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10')                 
+                query: {
+                    'app': Joi.number().min(0).max(1).description('App referandum için 0, kapistir için 1'),
+                    'user_id': Joi.string().description('Kaç adet soru getireceği bilgisi, default: 10')
                 },
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
@@ -133,7 +133,7 @@ exports.register = function(server, options, next) {
                 }
             }
         }
-    },{
+    }, {
         method: 'POST',
         path: '/v1/question',
         config: {
@@ -193,7 +193,7 @@ exports.register = function(server, options, next) {
                 }
             }
         }
-    },{
+    }, {
         method: 'POST',
         path: '/v1/question/edit/{id}',
         config: {
@@ -257,13 +257,13 @@ exports.register = function(server, options, next) {
         config: {
             description: 'Upload image',
             tags: ['api', 'image', 'upload'],
-            notes: ['image upload ','https://github.com/CodeRockets/cr-voter/blob/master/postman-img-upload.png'],
+            notes: ['image upload ', 'https://github.com/CodeRockets/cr-voter/blob/master/postman-img-upload.png'],
             payload: {
                 output: 'stream',
                 parse: true,
                 allow: 'multipart/form-data',
-                 maxBytes: 209715200,
-                 timeout:false
+                maxBytes: 209715200,
+                timeout: false
             },
             handler: questionController.upload,
             validate: {
@@ -283,8 +283,8 @@ exports.register = function(server, options, next) {
                                 error: null,
                                 message: "success",
                                 timestamp: Date.now(),
-                                data: {                                    
-                                    "img": "http://cdn1.lcwaikiki.com/ProductImages/20152/3/2418450/M_20152-5K8893Z6-2B0_A.jpg"                                    
+                                data: {
+                                    "img": "http://cdn1.lcwaikiki.com/ProductImages/20152/3/2418450/M_20152-5K8893Z6-2B0_A.jpg"
                                 }
                             }).label('Result')
                         }

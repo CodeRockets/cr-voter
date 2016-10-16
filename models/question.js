@@ -36,7 +36,7 @@ QuestionModel.prototype.editQuestion = function(question, cb) {
 
 };
 
-QuestionModel.prototype.getQuestion = function(user_id,q_id, cb) {
+QuestionModel.prototype.getQuestion = function(user_id,q_id,app, cb) {
 
 
   var rawQuery = "";

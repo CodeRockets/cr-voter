@@ -119,7 +119,7 @@ QuestionController.prototype.getOne = function(request, reply) {
     try {
 
         var uId = request.query.user_id;
-        var qId = request.query.q_id;
+        var qId = request.params.id;
         var app = request.query.app;
 
         this.questionModel.getQuestion(uId, qId, app, function(data) {
