@@ -115,6 +115,26 @@ QuestionController.prototype.fetch = function(request, reply) {
     }
 };
 
+QuestionController.prototype.getOne = function(request, reply) {
+    try {
+
+        var uId = request.query.user_id;
+        var qId = request.query.q_id;
+        var app = request.query.app;
+
+        this.questionModel.getQuestion(uId, qId, app, function(data) {
+            reply({
+                data: {                   
+                    "rows": data
+                }
+            });
+        });
+
+    } catch (e) {
+        reply(Boom.notFound(e.message));
+    }
+};
+
 QuestionController.prototype.delete = function(request, reply) {
     try {
 

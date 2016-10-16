@@ -36,6 +36,23 @@ QuestionModel.prototype.editQuestion = function(question, cb) {
 
 };
 
+QuestionModel.prototype.getQuestion = function(user_id,q_id, cb) {
+
+
+  var rawQuery = "";
+    var _replacements = [user_id, q_id, app];
+
+    rawQuery = 'select * from proc_get_question_by_id(cast(? as UUID),cast(? as UUID),?)';
+
+    this.sequelize.query(rawQuery, {
+            replacements: _replacements,
+            type: this.sequelize.QueryTypes.SELECT,
+        })
+        .then(function(questions) {          
+            cb(questions);
+        });
+};
+
 QuestionModel.prototype.showAllQuestions = function(cb) {
 
     this.questionSchema.findAll().then(function(questions) {
