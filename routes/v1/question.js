@@ -157,6 +157,64 @@ exports.register = function(server, options, next) {
                 }
             }
         }
+    },{
+        method: 'POST',
+        path: '/v1/question/edit/{id}',
+        config: {
+            description: 'Edit question route for both application',
+            tags: ['api', 'question', 'add'],
+            notes: ['Referandum uygulamasından data post ederken **option_a** ve **option_b** parametrelerini göndermenize gerek yok.',
+                'Kapıştır uygulamasından data post ederken **question_text** ve **question_image** parametrelerini göndermenize gerek yok.',
+                'Success durumunda verilen response hata durumunda statusCode 200 den farklı olarak dünüyor.',
+                'İsteğin başarımını response status code dan anlayabilirsiniz. Dönen dataya bakmaya gerek yok.',
+                'Headerlar zorunlu.'
+            ],
+
+            handler: questionController.editQuestion,
+            validate: {
+                payload: Joi.object().keys({
+                    question_text: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru metni'),
+                    question_image: Joi.when('app', { is: 0, then: Joi.required() }).description('Soru resim linki'),
+                    option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
+                    option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
+                }),
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                statusCode: 200,
+                                error: null,
+                                message: "success",
+                                timestamp: Date.now(),
+                                data: {
+                                    "id": "5d3e2860-d8d0-11e5-9d43-8948e35a3da2",
+                                    "option_a_count": 0,
+                                    "option_b_count": 0,
+                                    "skip_count": 0,
+                                    "created_at": "2016-02-21T19:21:53.000Z",
+                                    "updated_at": "2016-02-21T19:21:53.000Z",
+                                    "is_deleted": false,
+                                    "user_id": "user_id",
+                                    "app": 0,
+                                    "question_text": "Bu pantolon güzel mi?",
+                                    "question_image": "http://cdn1.lcwaikiki.com/ProductImages/20152/3/2418450/M_20152-5K8893Z6-2B0_A.jpg",
+                                    "option_b": "hayir",
+                                    "option_a": "evet"
+                                }
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
     }, {
         method: 'POST',
         path: '/v1/question/image',

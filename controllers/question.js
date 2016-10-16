@@ -41,6 +41,34 @@ QuestionController.prototype.addQuestion = function(request, reply) {
     }
 };
 
+QuestionController.prototype.editQuestion = function(request, reply) {
+    try {
+        var newQuestion = {      
+            "id": request.params.id
+        };
+
+        if (request.payload.app === 1) { //Kapistir
+            newQuestion.option_b = request.payload.option_b;
+            newQuestion.option_a = request.payload.option_a;
+            //empty 
+
+        } else { //Referandum
+            newQuestion.question_text = request.payload.question_text;
+            newQuestion.question_image = request.payload.question_image;
+            newQuestion.option_b = 'hayir';
+            newQuestion.option_a = 'evet';
+        }
+
+        this.questionModel.editQuestion(newQuestion, function(editedQuestion) {
+            reply({ data: editedQuestion });
+        });
+
+
+    } catch (e) {
+        reply(Boom.badRequest(e.message));
+    }
+};
+
 
 // [GET] /tasks/{id}
 QuestionController.prototype.all = function(request, reply) {

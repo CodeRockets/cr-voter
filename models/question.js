@@ -15,6 +15,27 @@ QuestionModel.prototype.insertQuestion = function(question, cb) {
     });
 };
 
+QuestionModel.prototype.editQuestion = function(question, cb) {
+
+    this.questionSchema.findOne({
+        where: {
+            id: question.id
+
+        }
+    }).then(function(db_question) {
+        db_question.option_a = question.option_a;
+        db_question.option_b = question.option_b;
+        db_question.question_text = question.question_text;
+        db_question.question_image = question.question_image;
+
+        db_question.save({ fields: ['option_a', 'option_b', 'question_text', 'question_image'] }).then(function() {
+            cb(db_question);
+        });
+
+    });
+
+};
+
 QuestionModel.prototype.showAllQuestions = function(cb) {
 
     this.questionSchema.findAll().then(function(questions) {
@@ -55,61 +76,61 @@ QuestionModel.prototype.fetchQuestions = function(app, limit, user_id, installat
 
     var debugMode = debug ? debug : 0;
     var rawQuery = "";
-    var _replacements=[user_id,app, limit];
-    if(debugMode==1){
-        rawQuery='select * from proc_fetch_questions_by_user_id_debug(cast(? as UUID),?,?)';
-    }else{
-        rawQuery='select * from proc_fetch_questions_by_user_id(cast(? as UUID),?,?)';
-        if(!user_id){
-            rawQuery='select * from proc_fetch_questions_by_imei(?,?,?)';
-            _replacements=[installation_id,app, limit];
+    var _replacements = [user_id, app, limit];
+    if (debugMode == 1) {
+        rawQuery = 'select * from proc_fetch_questions_by_user_id_debug(cast(? as UUID),?,?)';
+    } else {
+        rawQuery = 'select * from proc_fetch_questions_by_user_id(cast(? as UUID),?,?)';
+        if (!user_id) {
+            rawQuery = 'select * from proc_fetch_questions_by_imei(?,?,?)';
+            _replacements = [installation_id, app, limit];
         }
     }
 
 
-     this.sequelize.query(rawQuery, {
-                replacements: _replacements,
-                type: this.sequelize.QueryTypes.SELECT,
-                // model: this.questionSchema
-            })
-            .then(function(questions) {
-                cb(questions);
-            });
+    this.sequelize.query(rawQuery, {
+            replacements: _replacements,
+            type: this.sequelize.QueryTypes.SELECT,
+            // model: this.questionSchema
+        })
+        .then(function(questions) {
+            cb(questions);
+        });
 
 
-/*    if (debugMode == 1) {
-        rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
-            "CREATE TEMP TABLE tempUserQuestionTable AS " +
-            "select  * from question where question.app=? and question.is_deleted=FALSE;";
+    /*    if (debugMode == 1) {
+            rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
+                "CREATE TEMP TABLE tempUserQuestionTable AS " +
+                "select  * from question where question.app=? and question.is_deleted=FALSE;";
 
-        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img, u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
-            "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
-            "from generate_series(1, 100)" +
-            ") limit ?;";
-       
+            rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img, u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
+                "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+                "from generate_series(1, 100)" +
+                ") limit ?;";
+           
 
-    } else {
-        rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
-            "CREATE TEMP TABLE tempUserQuestionTable AS " +
-            "select  * from question where question.app=? and question.is_deleted=FALSE " +
-            "EXCEPT " +
-            "select q.* from answer a inner JOIN question q on a.question_id=q.id ";
+        } else {
+            rawQuery = "DROP TABLE IF EXISTS tempUserQuestionTable; " +
+                "CREATE TEMP TABLE tempUserQuestionTable AS " +
+                "select  * from question where question.app=? and question.is_deleted=FALSE " +
+                "EXCEPT " +
+                "select q.* from answer a inner JOIN question q on a.question_id=q.id ";
 
-        rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
+            rawQuery = rawQuery + ((user_id) ? "where a.user_id=(?::UUID); " : "where a.installation_id=?; ");
 
-        rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img,u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
-            "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
-            "from generate_series(1, 100)" +
-            ") limit ?;";
-        this.sequelize.query(rawQuery, {
-                replacements: [app, (user_id) ? user_id : installation_id, limit],
-                type: this.sequelize.QueryTypes.SELECT,
-                // model: this.questionSchema
-            })
-            .then(function(questions) {
-                cb(questions);
-            });
-    }*/
+            rawQuery = rawQuery + 'select tu.*,u.profile_img as asker_profile_img,u.name as asker_name from (select (row_number() over ()) as rn,* from tempUserQuestionTable) as tu inner JOIN "user" as u on u.id=tu.user_id where tu.rn in (' +
+                "select DISTINCT round(random() * (select count( * ) from tempUserQuestionTable))::integer as id " +
+                "from generate_series(1, 100)" +
+                ") limit ?;";
+            this.sequelize.query(rawQuery, {
+                    replacements: [app, (user_id) ? user_id : installation_id, limit],
+                    type: this.sequelize.QueryTypes.SELECT,
+                    // model: this.questionSchema
+                })
+                .then(function(questions) {
+                    cb(questions);
+                });
+        }*/
 
 };
 
@@ -135,7 +156,7 @@ QuestionModel.prototype.getAllKapistirForWeb = function(cb) {
 
 QuestionModel.prototype.deleteQuestion = function(id, cb) {
 
-    this.questionSchema.update({is_deleted:"true"}, {
+    this.questionSchema.update({ is_deleted: "true" }, {
         where: { id: id }
     }).then(function() {
         cb('OK');
@@ -185,7 +206,7 @@ QuestionModel.prototype.increaseAbuse = function(answer, cb) {
 
 QuestionModel.prototype.increaseFavorite = function(answer, cb) {
     var incrementField = { favorite_count: Sequelize.literal('favorite_count+1') }
-    if (answer.unfavorite===true) {
+    if (answer.unfavorite === true) {
         incrementField = { favorite_count: Sequelize.literal('favorite_count-1') }
     }
 
