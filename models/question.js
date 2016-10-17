@@ -91,16 +91,24 @@ QuestionModel.prototype.userQuestions = function(user_id, app, limit, cb) {
 
 QuestionModel.prototype.userFavorites = function(user_id, app, limit, cb) {
 
-    var rawQuery = 'select * from question where id in(SELECT question_id from answer where user_id=? and answer.is_favorite=true)' +
-        'and question.is_deleted=FALSE and question.app=? limit ?;'
+
+
+
+    var rawQuery = "";
+    var _replacements = [user_id, app, limit];
+
+    rawQuery = 'select * from proc_fetch_user_favorites(cast(? as UUID),?,?)';
+
     this.sequelize.query(rawQuery, {
-            replacements: [user_id, app, limit],
+            replacements: _replacements,
             type: this.sequelize.QueryTypes.SELECT,
-            // model: this.questionSchema
         })
         .then(function(questions) {
             cb(questions);
         });
+
+
+
 
 };
 
