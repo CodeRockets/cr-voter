@@ -34,19 +34,19 @@ UserController.prototype.signup = function(request, reply) {
                     }
 
                     var data = {};
-                    data.friends=[]
+                    data.friends = []
                     data.facebook_id = res.id;
                     data.name = res.name;
                     data.profile_img = res.picture.data.url;
                     data.imei = request.headers['x-voter-installation'];
-                    data.app=parseInt(request.headers['x-voter-client-id']);
-                    data.last_fb_token=request.payload.token;
+                    data.app = parseInt(request.headers['x-voter-client-id']);
+                    data.last_fb_token = request.payload.token;
 
                     for (var i = 0; i < res.friends.data.length; i++) {
-                        
-                          data.friends.push(res.friends.data[i].id);
+
+                        data.friends.push(res.friends.data[i].id);
                     }
-                  
+
 
                     callback(null, data);
                 });
@@ -66,10 +66,10 @@ UserController.prototype.signup = function(request, reply) {
                 //     data.imei = request.headers['x-voter-installation'];
 
                 //     for (var i = 0; i < res.friends.data.length; i++) {
-                        
+
                 //           data.friends.push(res.friends.data[i].id);
                 //     }
-                  
+
 
                 //     callback(null, data);
                 // });
@@ -104,14 +104,39 @@ UserController.prototype.signup = function(request, reply) {
 
 };
 
+UserController.prototype.banUser = function(request, reply) {
+    try {
+
+
+        var userId = request.payload.user_id;
+        var banUserId = request.payload.ban_user_id;
+        var clientId = request.payload.client_id;
+
+
+
+        var self = this;
+
+
+
+        self.userModel.ban(userId,banUserId,clientId, function() {
+            reply({ data: null });
+        });
+
+    } catch (e) {
+        reply(Boom.badRequest(e.message));
+    }
+
+};
+
+
 UserController.prototype.fetchUserQuestions = function(request, reply) {
     try {
-var self=this;
+        var self = this;
         var data = {};
         async.waterfall([
             function(callback) {
 
-                self.questionModel.userQuestions(request.query.user_id,request.query.app,  request.query.limit, function(q) {
+                self.questionModel.userQuestions(request.query.user_id, request.query.app, request.query.limit, function(q) {
                     data.questions = {
                         "count": q.length,
                         "rows": q
@@ -124,7 +149,7 @@ var self=this;
             },
             function(data, callback) {
 
-                self.questionModel.userFavorites( request.query.user_id,request.query.app, request.query.limit, function(f) {
+                self.questionModel.userFavorites(request.query.user_id, request.query.app, request.query.limit, function(f) {
                     data.favorites = {
                         "count": f.length,
                         "rows": f
@@ -140,7 +165,7 @@ var self=this;
                 reply(Boom.badImplementation(JSON.stringify(err)));
                 return;
             } else {
-                reply({data:result});
+                reply({ data: result });
             }
         });
 
@@ -148,6 +173,9 @@ var self=this;
         reply(Boom.notFound(e.message));
     }
 };
+
+
+
 
 
 

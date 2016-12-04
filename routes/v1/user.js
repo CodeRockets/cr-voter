@@ -58,6 +58,46 @@ exports.register = function(server, options, next) {
             }
         }
     }, {
+        method: 'POST',
+        path: '/v1/user/ban',
+        config: {
+            description: 'Creates a user with facebook api token',
+            tags: ['api', 'user', 'add'],
+            notes: ['Sadece facebook auth_token göndereceksiniz. Geriye user alacaksınız.',
+                'Headerlar zorunlu.'
+            ],
+            handler: userController.banUser,
+            validate: {
+                payload: Joi.object().keys({
+                    user_id: Joi.string().description('Banlayan user_id'),
+                    ban_user_id: Joi.string().description('Banlanan user_id'),
+                    client_id: Joi.string().description('Uygulama'),
+
+                }),
+                headers: Joi.object({
+                    'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),
+                    'x-voter-version': Joi.string().required().description('Versiyon - Mobil uygulama versiyonu.'),
+                    'x-voter-installation': Joi.string().required().description('Her installation için farklı bir id olacak.'),
+                }).unknown()
+            },
+            plugins: {
+                'hapi-swagger': {
+                    responses: {
+                        '200': {
+                            'description': 'Response success örneği, aynı object hata durumunda da dönüyor.',
+                            'schema': Joi.object({
+                                "data": null,
+                                "statusCode": 200,
+                                "error": null,
+                                "message": "success",
+                                "timestamp": 1460067996068
+                            }).label('Result')
+                        }
+                    }
+                }
+            }
+        }
+    },{
         method: 'GET',
         path: '/v1/user/questions',
         config: {

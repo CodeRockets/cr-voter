@@ -4,6 +4,7 @@ var crypto = require('crypto');
 
 function UserModel(db) {
     this.userSchema = db.user;
+       this.sequelize = db.sequelize;
 };
 
 UserModel.prototype.upsert = function(user, cb) {
@@ -24,10 +25,10 @@ UserModel.prototype.upsert = function(user, cb) {
         } else {
             var mUser = userList[0];
             mUser.update({
-                app:user.app,
-                last_fb_token:user.last_fb_token,
+                app: user.app,
+                last_fb_token: user.last_fb_token,
                 imei: user.imei,
-                friends:user.friends
+                friends: user.friends
             }).then(function() {
                 cb(mUser);
             })
@@ -36,6 +37,25 @@ UserModel.prototype.upsert = function(user, cb) {
         }
 
     });
+};
+
+UserModel.prototype.ban = function(user_id, banned_user_id, app, cb) {
+    //Upsert olacak
+
+    var self = this;
+
+    var _replacements = [user_id, banned_user_id, app];
+
+    var rawQuery = 'insert into banned_users(user_id,banned_user_id,app,created_at) VALUES (?,?,?,now())';
+
+
+    this.sequelize.query(rawQuery, {
+            replacements: _replacements
+        })
+        .then(function() {
+            cb();
+        });
+
 };
 
 
