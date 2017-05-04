@@ -20,6 +20,12 @@ exports.register = function(server, options, next) {
         }
     }, {
         method: 'GET',
+        path: '/v1/ref',
+        config: {
+            handler: kapistirController.ref
+        }
+    },{
+        method: 'GET',
         path: '/public/{path*}',
         handler: {
             directory: {

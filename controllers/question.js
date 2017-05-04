@@ -2,17 +2,19 @@
 
 var Boom = require('boom');
 var QuestionModel = require('../models/question');
+var UserModel = require('../models/user');
 var cloudinary = require('cloudinary');
 var fs = require('fs');
-var config_params    = require(__dirname + '/../config/config.json');
+var config_params = require(__dirname + '/../config/config.json');
 var async = require('async');
 
 
 function QuestionController(db) {
     this.questionModel = new QuestionModel(db);
+    this.userModel = new UserModel(db);
 };
 
-QuestionController.prototype.addQuestion = function(request, reply) {
+QuestionController.prototype.addQuestion = function (request, reply) {
     try {
         var newQuestion = {
             "user_id": request.payload.user_id,
@@ -29,21 +31,56 @@ QuestionController.prototype.addQuestion = function(request, reply) {
             newQuestion.question_image = request.payload.question_image;
             newQuestion.option_b = 'hayir';
             newQuestion.option_a = 'evet';
-        }
+            newQuestion.is_private = request.payload.is_private == null ? false : request.payload.is_private;
+            newQuestion.private_url = request.payload.private_url == null ? "" : request.payload.private_url;
 
-        this.questionModel.insertQuestion(newQuestion, function(createdQuestion) {
+        }
+        var self = this;
+        async.waterfall([
+            function (callback) {
+                self.questionModel.insertQuestion(newQuestion, function (createdQuestion) {
+                    callback(null, createdQuestion);
+                });
+            },
+            function (createdQuestion, callback) {
+                if (!request.payload.notify_friend) {
+                    callback(null, createdQuestion);
+                } else {
+                    var friendsArray = [];
+                    self.userModel.getUserFriends(newQuestion.user_id, newQuestion.app, function (users) {
+                        if (users.length == 0) {
+                            callback(null, createdQuestion);
+                        }
+                        else {
+                            for (var i = 0; i < users.length; i++) {
+                                var mUser = users[i];
+                                if (mUser.reg_id != null || mUser.reg_id != "") {
+                                    friendsArray.push(mUser.reg_id);
+                                }
+                            }
+                            self.userModel.findUserById(newQuestion.user_id, function (userinfo) {
+                                createdQuestion.asker_name=userinfo.name;
+                                self.questionModel.notifyFriends(createdQuestion, friendsArray, function (err, info) {
+                                    callback(null, createdQuestion);
+                                });
+                            });
+
+                        }
+                    });
+                }
+            }
+        ], function (err, createdQuestion) {
             reply({ data: createdQuestion });
         });
-
 
     } catch (e) {
         reply(Boom.badRequest(e.message));
     }
 };
 
-QuestionController.prototype.editQuestion = function(request, reply) {
+QuestionController.prototype.editQuestion = function (request, reply) {
     try {
-        var newQuestion = {      
+        var newQuestion = {
             "id": request.params.id
         };
 
@@ -59,7 +96,7 @@ QuestionController.prototype.editQuestion = function(request, reply) {
             newQuestion.option_a = 'evet';
         }
 
-        this.questionModel.editQuestion(newQuestion, function(editedQuestion) {
+        this.questionModel.editQuestion(newQuestion, function (editedQuestion) {
             reply({ data: editedQuestion });
         });
 
@@ -71,10 +108,10 @@ QuestionController.prototype.editQuestion = function(request, reply) {
 
 
 // [GET] /tasks/{id}
-QuestionController.prototype.all = function(request, reply) {
+QuestionController.prototype.all = function (request, reply) {
     try {
 
-        this.questionModel.showAllQuestions(function(data) {
+        this.questionModel.showAllQuestions(function (data) {
             reply(data);
         });
 
@@ -83,25 +120,25 @@ QuestionController.prototype.all = function(request, reply) {
     }
 };
 
-QuestionController.prototype.userQuestions = function(request, reply) {
+QuestionController.prototype.userQuestions = function (request, reply) {
 
-        this.questionModel.userQuestions(request.params.app, request.query.user_id, request.query.limit,function(data) {
-            reply({
-                data: {
-                    "count": data.length,
-                    "rows": data
-                }
-            });
+    this.questionModel.userQuestions(request.params.app, request.query.user_id, request.query.limit, function (data) {
+        reply({
+            data: {
+                "count": data.length,
+                "rows": data
+            }
         });
+    });
 
 };
 
-QuestionController.prototype.fetch = function(request, reply) {
+QuestionController.prototype.fetch = function (request, reply) {
     try {
 
         var uId = (request.query.user_id || request.query.user_id.length > 0) ? request.query.user_id : null;
 
-        this.questionModel.fetchQuestions(request.params.app, request.query.limit, uId, request.headers['x-voter-installation'],request.query.debug, function(data) {
+        this.questionModel.fetchQuestions(request.params.app, request.query.limit, uId, request.headers['x-voter-installation'], request.query.debug, function (data) {
             reply({
                 data: {
                     "count": data.length,
@@ -115,16 +152,16 @@ QuestionController.prototype.fetch = function(request, reply) {
     }
 };
 
-QuestionController.prototype.getOne = function(request, reply) {
+QuestionController.prototype.getOne = function (request, reply) {
     try {
 
         var uId = request.query.user_id;
         var qId = request.params.id;
         var app = request.query.app;
 
-        this.questionModel.getQuestion(uId, qId, app, function(data) {
+        this.questionModel.getQuestion(uId, qId, app, function (data) {
             reply({
-                data: {                   
+                data: {
                     "rows": data
                 }
             });
@@ -135,10 +172,10 @@ QuestionController.prototype.getOne = function(request, reply) {
     }
 };
 
-QuestionController.prototype.delete = function(request, reply) {
+QuestionController.prototype.delete = function (request, reply) {
     try {
 
-        this.questionModel.deleteQuestion(request.params.id, function(data) {
+        this.questionModel.deleteQuestion(request.params.id, function (data) {
             reply({
                 data: null
             });
@@ -152,7 +189,7 @@ QuestionController.prototype.delete = function(request, reply) {
 
 
 
-QuestionController.prototype.upload = function(request, reply) {
+QuestionController.prototype.upload = function (request, reply) {
     try {
 
         cloudinary.config(config_params["cloudinary"]);
@@ -168,15 +205,15 @@ QuestionController.prototype.upload = function(request, reply) {
             var path = __dirname + "/../uploads/" + name;
             var file = fs.createWriteStream(path);
 
-            file.on('error', function(err) {
+            file.on('error', function (err) {
                 console.error(err);
             });
 
             data.file.pipe(file);
 
-            data.file.on('end', function(err) {
+            data.file.on('end', function (err) {
 
-                cloudinary.uploader.upload(path, function(result) {
+                cloudinary.uploader.upload(path, function (result) {
                     fs.unlink(path, (err) => {
                         if (err) throw err;
                         reply({ data: result.url });

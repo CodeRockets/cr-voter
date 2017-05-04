@@ -28,7 +28,9 @@ KapistirController.prototype.all = function(request, reply) {
         reply(Boom.notFound(e.message));
     }
 };
-
+KapistirController.prototype.ref = function(request, reply) {
+    reply.view('ref',null);     
+};
 
 
 

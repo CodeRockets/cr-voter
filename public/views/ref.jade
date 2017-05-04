@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+
+    title Test sorular
+  body
+    a(onclick='javascript:try_to_open_app();',href="eferhatg://test") referandum
+    script(type='text/javascript').
+      function open_appstore() {
+          window.location='https://play.google.com';
+      }
+
+      function try_to_open_app() {
+          setTimeout('open_appstore()', 300);
+      }

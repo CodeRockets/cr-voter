@@ -41,6 +41,7 @@ UserController.prototype.signup = function(request, reply) {
                     data.imei = request.headers['x-voter-installation'];
                     data.app = parseInt(request.headers['x-voter-client-id']);
                     data.last_fb_token = request.payload.token;
+                    data.reg_id=request.payload.reg_id==null?'':request.payload.reg_id;
 
                     for (var i = 0; i < res.friends.data.length; i++) {
 

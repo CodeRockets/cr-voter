@@ -155,6 +155,9 @@ exports.register = function(server, options, next) {
                     app: Joi.number().min(0).max(1).required().description('App referandum için 0, kapistir için 1'),
                     option_a: Joi.when('app', { is: 1, then: Joi.required() }).description('A şıkkı metni ya da resim linki'),
                     option_b: Joi.when('app', { is: 1, then: Joi.required() }).description('B şıkkı metni ya da resim linki'),
+                    notify_friend: Joi.boolean().description("friend notification"),
+                    is_private:Joi.boolean().description("is private"),
+                    private_url:Joi.string().description("private url")
                 }),
                 headers: Joi.object({
                     'x-voter-client-id': Joi.string().required().description('Her app için farklı olacak.'),

@@ -18,7 +18,8 @@ module.exports = function(sequelize, DataTypes) {
         is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
         friends: { type: DataTypes.ARRAY(DataTypes.STRING), defaultValue: null },
         app: DataTypes.INTEGER,
-        last_fb_token: DataTypes.STRING
+        last_fb_token: DataTypes.STRING,
+        reg_id: DataTypes.STRING,
 
 
     }, {

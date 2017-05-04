@@ -2,7 +2,7 @@
 
 var Sequelize = require('sequelize');
 
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
     var question = sequelize.define("question", {
         id: {
             type: Sequelize.UUID,
@@ -22,15 +22,17 @@ module.exports = function(sequelize, DataTypes) {
         updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
         is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
         abuse_count: { type: DataTypes.INTEGER, defaultValue: 0 },
-        favorite_count: { type: DataTypes.INTEGER, defaultValue: 0 }
+        favorite_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+        is_private: { type: DataTypes.BOOLEAN, defaultValue: false },
+        private_url: DataTypes.STRING,
 
     }, {
-        tableName: 'question',
-        schema: 'public',
-        freezeTableName: true,
-        timestamps: false,
-        hasTrigger: true
-    });
+            tableName: 'question',
+            schema: 'public',
+            freezeTableName: true,
+            timestamps: false,
+            hasTrigger: true
+        });
 
     return question;
 };
